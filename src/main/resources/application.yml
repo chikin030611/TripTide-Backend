@@ -45,7 +45,7 @@ spring:
   
   jackson:
     serialization:
-      FAIL_ON_EMPTY_BEANS: false
+      fail-on-empty-beans: false
 
 server:
   error:

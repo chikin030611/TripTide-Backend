@@ -48,4 +48,12 @@ public class AppUserService implements UserDetailsService {
 
         return user;
     }
+
+    public boolean existsByUsername(String username) {
+        return appUserRepository.existsByUsername(username);
+    }
+
+    public boolean existsByEmail(String email) {
+        return appUserRepository.existsByEmail(email);
+    }
 }
