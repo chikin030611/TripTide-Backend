@@ -13,7 +13,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   
   devtools:
     restart:
@@ -38,17 +38,20 @@ spring:
           auth: true
           starttls:
             enable: true
+  
+  mvc:
+    contentnegotiation:
+      defaultContentType: application/json
+  
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
 
 server:
   error:
     include-message: always
     include-binding-errors: always
 
-jpa:
-  hibernate:
-    ddl-auto: update
-  properties:
-    hibernate:
-      dialect: org.hibernate.dialect.PostgreSQLDialect
-      format_sql: true
-    show-sql: true
+jwt:
+  secret: "your-256-bit-secret-key-here-make-it-long-and-secure"
+  expiration: 86400000  # 24 hours in milliseconds

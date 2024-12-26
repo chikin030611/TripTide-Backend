@@ -1,11 +1,14 @@
 package com.triptide.backend.model;
 
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.triptide.backend.dto.LoginRequest;
 
 import lombok.AllArgsConstructor;
 
@@ -21,8 +24,8 @@ public class AppUserService implements UserDetailsService {
         AppUser user = appUserRepository.findByEmail(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        return org.springframework.security.core.userdetails.User
-            .withUsername(user.getEmail())
+        return User.builder()
+            .username(user.getEmail())
             .password(user.getPassword())
             .roles("USER")
             .build();
