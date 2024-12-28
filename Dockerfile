@@ -10,4 +10,8 @@ WORKDIR /app
 COPY --from=build /app/build/libs/triptide-backend-0.0.1-SNAPSHOT.jar app.jar
 ENV PORT=8080
 EXPOSE ${PORT}
-ENTRYPOINT exec java -Dserver.port=${PORT} -jar app.jar
+ENTRYPOINT exec java -Dserver.port=${PORT} \
+    -Dlogging.level.org.springframework=DEBUG \
+    -Dlogging.level.org.apache.tomcat=DEBUG \
+    -XX:+PrintCommandLineFlags \
+    -jar app.jar

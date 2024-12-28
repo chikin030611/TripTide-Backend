@@ -3,9 +3,9 @@ spring:
     name: ${APP_NAME:triptide-backend}
   
   datasource:
-    url: ${DATABASE_URL}
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/triptide}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
   
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -53,7 +53,26 @@ server:
     include-message: always
     include-binding-errors: always
   port: ${PORT:8080}
+  tomcat:
+    accesslog:
+      enabled: true
 
 jwt:
   secret: ${JWT_SECRET:your-256-bit-secret-key-here-make-it-long-and-secure}
   expiration: ${JWT_EXPIRATION:86400000}  # 24 hours in milliseconds
+
+logging:
+  level:
+    org.springframework: INFO
+    org.apache.tomcat: DEBUG
+    org.apache.catalina: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
