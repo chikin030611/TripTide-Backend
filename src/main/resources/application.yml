@@ -1,0 +1,59 @@
+spring:
+  application:
+    name: ${APP_NAME:triptide-backend}
+  
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  
+  devtools:
+    restart:
+      enabled: ${DEVTOOLS_ENABLED:true}
+      poll-interval: ${DEVTOOLS_POLL_INTERVAL:2s}
+      quiet-period: ${DEVTOOLS_QUIET_PERIOD:1s}
+      additional-paths: src/main/java/
+    livereload:
+      enabled: ${LIVERELOAD_ENABLED:true}
+  
+  thymeleaf:
+    cache: false
+  
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:your-email@gmail.com}
+    password: ${MAIL_PASSWORD:your-app-specific-password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  
+  mvc:
+    contentnegotiation:
+      defaultContentType: application/json
+  
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+  port: ${PORT:8080}
+
+jwt:
+  secret: ${JWT_SECRET:your-256-bit-secret-key-here-make-it-long-and-secure}
+  expiration: ${JWT_EXPIRATION:86400000}  # 24 hours in milliseconds
