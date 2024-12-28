@@ -1,13 +1,13 @@
 # Build stage
-FROM gradle:8.5-jdk21-alpine AS build
-WORKDIR /app
+FROM gradle:8.5-jdk21 AS build
+WORKDIR /app/
 COPY build.gradle settings.gradle ./
-COPY gradle ./gradle
-COPY src ./src
+COPY gradle/ gradle/
+COPY src/ src/
 RUN gradle build --no-daemon -x test
 
 # Run stage
-FROM eclipse-temurin:21-jre-alpine
-WORKDIR /app
-COPY --from=build /app/build/libs/*.jar app.jar
+FROM eclipse-temurin:21-jre
+WORKDIR /app/
+COPY --from=build /app/build/libs/*.jar ./app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
