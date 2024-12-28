@@ -1,11 +1,11 @@
 spring:
   application:
-    name: triptide-backend
+    name: ${APP_NAME:triptide-backend}
   
   datasource:
-    url: jdbc:postgresql://localhost:5432/registration
-    username: postgres
-    password: 
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/triptide}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:}
   
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
@@ -13,25 +13,25 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${JPA_DDL_AUTO:update}
   
   devtools:
     restart:
-      enabled: true
-      poll-interval: 2s
-      quiet-period: 1s
+      enabled: ${DEVTOOLS_ENABLED:true}
+      poll-interval: ${DEVTOOLS_POLL_INTERVAL:2s}
+      quiet-period: ${DEVTOOLS_QUIET_PERIOD:1s}
       additional-paths: src/main/java/
     livereload:
-      enabled: true
+      enabled: ${LIVERELOAD_ENABLED:true}
   
   thymeleaf:
     cache: false
   
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: your-email@gmail.com
-    password: your-app-specific-password
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:your-email@gmail.com}
+    password: ${MAIL_PASSWORD:your-app-specific-password}
     properties:
       mail:
         smtp:
@@ -51,7 +51,8 @@ server:
   error:
     include-message: always
     include-binding-errors: always
+  port: ${PORT:8080}
 
 jwt:
-  secret: "your-256-bit-secret-key-here-make-it-long-and-secure"
-  expiration: 86400000  # 24 hours in milliseconds
+  secret: ${JWT_SECRET:your-256-bit-secret-key-here-make-it-long-and-secure}
+  expiration: ${JWT_EXPIRATION:86400000}  # 24 hours in milliseconds
