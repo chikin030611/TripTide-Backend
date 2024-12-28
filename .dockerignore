@@ -3,4 +3,5 @@
 .env
 .env.example
 build/
-!build/libs/*.jar 
+!build/libs/*.jar
+.gradle/ 
