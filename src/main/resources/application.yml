@@ -3,17 +3,18 @@ spring:
     name: ${APP_NAME:triptide-backend}
   
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/triptide}
-    username: ${DATABASE_USERNAME:postgres}
-    password: ${DATABASE_PASSWORD:}
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
   
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: ${JPA_DDL_AUTO:update}
+      ddl-auto: update
+    show-sql: true
   
   devtools:
     restart:
