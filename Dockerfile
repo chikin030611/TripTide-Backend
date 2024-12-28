@@ -1,13 +1,13 @@
-# the base image
-FROM amazoncorretto:21
+# Build stage
+FROM gradle:8.5-jdk21-alpine AS build
+WORKDIR /app
+COPY build.gradle settings.gradle ./
+COPY gradle ./gradle
+COPY src ./src
+RUN gradle build --no-daemon -x test
 
-# the JAR file path
-ARG JAR_FILE=target/*.jar
-
-# Copy the JAR file from the build context into the Docker image
-COPY build/libs/triptide-backend-0.0.1-SNAPSHOT.jar application.jar
-
-CMD apt-get update -y
-
-# Set the default command to run the Java application
-ENTRYPOINT ["java", "-Xmx2048M", "-jar", "/application.jar"]
+# Run stage
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY --from=build /app/build/libs/*.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
