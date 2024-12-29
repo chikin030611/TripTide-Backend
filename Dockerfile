@@ -7,11 +7,15 @@ RUN gradle build -x test --no-daemon
 # Run stage
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
-COPY --from=build /app/build/libs/*.jar ./
+# Copy and rename the JAR file to a known name
+COPY --from=build /app/build/libs/backend-*.jar ./app.jar
 
 VOLUME /root/.config/gcloud
 
 ENV PORT=8080
 ENV SPRING_PROFILES_ACTIVE=prod
 EXPOSE ${PORT}
-ENTRYPOINT ["java", "-jar", "app.jar"] 
+ENTRYPOINT ["java", \
+            "-Dserver.port=${PORT}", \
+            "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", \
+            "-jar", "app.jar"] 
