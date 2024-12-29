@@ -8,6 +8,7 @@ FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 COPY --from=build /app/build/libs/triptide-backend-0.0.1-SNAPSHOT.jar app.jar
 
+ENV HOST 0.0.0.0
 ENV PORT=8080
 ENV SPRING_PROFILES_ACTIVE=prod
 EXPOSE ${PORT}
