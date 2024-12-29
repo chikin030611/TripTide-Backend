@@ -9,7 +9,7 @@ RUN ls -la build/libs/
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 # Copy and rename the JAR file to a known name
-COPY --from=build /app/build/libs/triptide-backend-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/build/libs/triptide-backend-0.0.1-SNAPSHOT.jar /app/app.jar
 
 VOLUME /root/.config/gcloud
 

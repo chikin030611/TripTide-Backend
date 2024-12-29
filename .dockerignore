@@ -8,3 +8,4 @@ Dockerfile
 build/
 .gradle/
 postgres-data/
+!build/libs/
