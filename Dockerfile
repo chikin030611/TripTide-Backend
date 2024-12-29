@@ -14,6 +14,4 @@ VOLUME /root/.config/gcloud
 ENV PORT=8080
 ENV SPRING_PROFILES_ACTIVE=prod
 EXPOSE ${PORT}
-ENTRYPOINT ["java", \
-            "-jar", "app.jar", \
-            "--server.port=${PORT}"] 
+ENTRYPOINT ["java", "-jar", "app.jar"] 
