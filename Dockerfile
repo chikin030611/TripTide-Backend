@@ -7,8 +7,9 @@ RUN gradle build -x test --no-daemon
 # Run stage
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
-COPY --from=build /app/build/libs/*.jar /app/app.jar/
+COPY --from=build /app/build/libs/*.jar app.jar/
 VOLUME /root/.config/gcloud
 
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENV PORT=8080
+EXPOSE ${PORT}
+ENTRYPOINT ["java", "-jar", "app.jar"]
