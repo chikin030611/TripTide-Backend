@@ -8,12 +8,12 @@ FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 COPY --from=build /app/build/libs/triptide-backend-0.0.1-SNAPSHOT.jar app.jar
 
-ENV HOST 0.0.0.0
-ENV HOSTNAME "0.0.0.0"
+ENV HOST=0.0.0.0
 ENV PORT=8080
 ENV SPRING_PROFILES_ACTIVE=prod
 EXPOSE ${PORT}
 ENTRYPOINT ["java", \
             "-Dserver.port=${PORT}", \
             "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", \
+            "-Dserver.address=${HOST}", \
             "-jar", "app.jar"]
