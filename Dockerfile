@@ -11,4 +11,7 @@ COPY --from=build /app/build/libs/triptide-backend-0.0.1-SNAPSHOT.jar app.jar
 ENV PORT=8080
 ENV SPRING_PROFILES_ACTIVE=prod
 EXPOSE ${PORT}
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", \
+            "-Dserver.port=${PORT}", \
+            "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", \
+            "-jar", "app.jar"]
