@@ -11,5 +11,9 @@ COPY --from=build /app/build/libs/*.jar app.jar/
 VOLUME /root/.config/gcloud
 
 ENV PORT=8080
+ENV SPRING_PROFILES_ACTIVE=prod
 EXPOSE ${PORT}
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", \
+            "-Dserver.port=${PORT}", \
+            "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", \
+            "-jar", "app.jar"]
