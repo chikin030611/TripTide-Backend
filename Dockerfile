@@ -8,10 +8,13 @@ RUN gradle build --no-daemon
 FROM openjdk:21-slim
 WORKDIR /app
 COPY --from=build /app/build/libs/triptide-backend-0.0.1-SNAPSHOT.jar app.jar
+
+# Default environment variables
 ENV PORT=8080
+ENV SPRING_PROFILES_ACTIVE=prod
+ENV JPA_SHOW_SQL=false
+
 EXPOSE ${PORT}
 ENTRYPOINT exec java -Dserver.port=${PORT} \
-    -Dlogging.level.org.springframework=DEBUG \
-    -Dlogging.level.org.apache.tomcat=DEBUG \
-    -XX:+PrintCommandLineFlags \
+    -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE} \
     -jar app.jar
