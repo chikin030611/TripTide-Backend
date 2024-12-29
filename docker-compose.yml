@@ -1,39 +1,40 @@
 version: '3.8'
 
 services:
-  app:
+  backend:
     build: .
     ports:
-      - "8080:8080"
+      - "${BACKEND_PORT:-8080}:8080"
     environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:3000}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${DB_NAME:-triptide}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-postgres}
+      - JWT_SECRET=${JWT_SECRET}
+      # GCP Cloud SQL variables
       - PROJECT=${PROJECT}
       - REGION=${REGION}
       - INSTANCE_NAME=${INSTANCE_NAME}
-      - DBNAME=${DBNAME}
-      - DBUSER=${DBUSER}
-      - DBPASS=${DBPASS}
-      - JWT_SECRET=${JWT_SECRET}
-      - SPRING_PROFILES_ACTIVE=dev
+      # Mail configuration
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
     volumes:
-      - type: bind
-        source: ${HOME}/.config/gcloud
-        target: /root/.config/gcloud
-    env_file:
-      - .env
+      - ${HOME}/.config/gcloud:/root/.config/gcloud:ro
     depends_on:
       - db
 
   db:
     image: postgres:15
     environment:
-      POSTGRES_DB: ${DBNAME}
-      POSTGRES_USER: ${DBUSER}
-      POSTGRES_PASSWORD: ${DBPASS}
+      - POSTGRES_DB=${DB_NAME:-triptide}
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
-  postgres-data:
+  postgres_data:
 
