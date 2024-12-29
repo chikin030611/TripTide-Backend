@@ -7,7 +7,7 @@ RUN gradle build -x test --no-daemon
 # Run stage
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
-COPY --from=build /app/build/libs/*.jar /app/app.jar
+COPY --from=build /app/build/libs/*.jar /app/app.jar/
 VOLUME /root/.config/gcloud
 
 EXPOSE 8080
