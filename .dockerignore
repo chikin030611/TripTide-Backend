@@ -1,26 +1,10 @@
 # Version control
-.git/
+.git
 .gitignore
-.github/
-
-# Gradle
-.gradle/
-build/
-!build/libs/*.jar
-
-# Environment files
 .env
-.env.example
-
-# IDE files
-.idea/
-*.iml
-.vscode/
-
-# Logs
-logs/
-*.log
-
-# OS files
-.DS_Store
-Thumbs.db
+README.md
+Dockerfile
+.dockerignore
+build/
+.gradle/
+postgres-data/

@@ -42,7 +42,6 @@ dependencies {
 	testImplementation 'com.h2database:h2'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'com.google.cloud.sql:postgres-socket-factory:1.15.2'
-	implementation 'io.github.cdimascio:dotenv-java:3.0.0'
 }
 
 tasks.named('test') {

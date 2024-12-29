@@ -6,7 +6,7 @@ spring:
     import: optional:file:.env[.properties]
 
   datasource:
-    url: ${DATABASE_URL}
+    url: jdbc:postgresql:///${DBNAME}?cloudSqlInstance=${PROJECT}:${REGION}:${INSTANCE_NAME}&socketFactory=com.google.cloud.sql.postgres.SocketFactory
     username: ${DBUSER}
     password: ${DBPASS}
     driver-class-name: org.postgresql.Driver
