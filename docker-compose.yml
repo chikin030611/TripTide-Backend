@@ -13,12 +13,15 @@ services:
       - DBUSER=${DBUSER}
       - DBPASS=${DBPASS}
       - JWT_SECRET=${JWT_SECRET}
+      - SPRING_PROFILES_ACTIVE=dev
+    volumes:
+      - type: bind
+        source: ${HOME}/.config/gcloud
+        target: /root/.config/gcloud
     env_file:
       - .env
     depends_on:
       - db
-    volumes:
-      - $HOME/.config/gcloud:/root/.config/gcloud
 
   db:
     image: postgres:15
