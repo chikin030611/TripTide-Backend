@@ -6,30 +6,28 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - PROJECT=${PROJECT}
-      - REGION=${REGION}
-      - INSTANCE_NAME=${INSTANCE_NAME}
-      - DBNAME=${DBNAME}
-      - DBUSER=${DBUSER}
-      - DBPASS=${DBPASS}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
       - JWT_SECRET=${JWT_SECRET}
-      - FRONTEND_URL=${FRONTEND_URL}
       - SPRING_PROFILES_ACTIVE=dev
     volumes:
       - type: bind
         source: ${HOME}/.config/gcloud
         target: /root/.config/gcloud
     env_file:
-      - .env
+      - .env.dev-hosted
     depends_on:
       - db
 
   db:
     image: postgres:15
     environment:
-      POSTGRES_DB: ${DBNAME}
-      POSTGRES_USER: ${DBUSER}
-      POSTGRES_PASSWORD: ${DBPASS}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
     ports:
       - "5432:5432"
     volumes:

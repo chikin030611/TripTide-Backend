@@ -51,6 +51,18 @@ tasks.named('test') {
 bootRun {
 	classpath = sourceSets.main.runtimeClasspath + configurations.developmentOnly
 	sourceResources sourceSets.main
+	doFirst {
+		def envFile = file('.env.dev-local')
+		if (envFile.exists()) {
+			def props = new Properties()
+			envFile.withReader { reader ->
+				props.load(reader)
+			}
+			props.each { key, value ->
+				environment key, value
+			}
+		}
+	}
 }
 
 test {
