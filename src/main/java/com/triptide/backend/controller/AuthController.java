@@ -15,8 +15,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -137,12 +139,14 @@ public class AuthController {
             
             UserDetails user = userDetailsService.loadUserByUsername(loginRequest.getEmail());
             String token = jwtService.generateToken(user);
+            String refreshToken = jwtService.generateRefreshToken(user);
             
             return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Map.of(
                     "success", true,
                     "token", token,
+                    "refreshToken", refreshToken,
                     "type", "Bearer"
                 ));
         } catch (AuthenticationException e) {
@@ -152,6 +156,78 @@ public class AuthController {
                 .body(Map.of(
                     "success", false,
                     "message", "Invalid credentials"
+                ));
+        }
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@RequestHeader("Authorization") String authHeader) {
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of(
+                        "success", false,
+                        "message", "Invalid token format"
+                    ));
+            }
+
+            String refreshToken = authHeader.substring(7);
+            String newToken = jwtService.refreshToken(refreshToken);
+            
+            return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Map.of(
+                    "success", true,
+                    "token", newToken,
+                    "type", "Bearer"
+                ));
+        } catch (Exception e) {
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Map.of(
+                    "success", false,
+                    "message", "Invalid refresh token"
+                ));
+        }
+    }
+
+    @GetMapping("/validate")
+    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String authHeader) {
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of(
+                        "valid", false,
+                        "message", "Invalid token format"
+                    ));
+            }
+
+            String token = authHeader.substring(7);
+            if (jwtService.isTokenExpired(token)) {
+                return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of(
+                        "valid", false,
+                        "message", "Token has expired"
+                    ));
+            }
+
+            // Get remaining time in milliseconds
+            long remainingTime = jwtService.getTokenRemainingTime(token);
+            
+            return ResponseEntity.ok(Map.of(
+                "valid", true,
+                "remainingTime", remainingTime
+            ));
+        } catch (Exception e) {
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of(
+                    "valid", false,
+                    "message", "Invalid token"
                 ));
         }
     }
