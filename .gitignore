@@ -44,5 +44,8 @@ postgres-data/
 .env*
 !.env.example
 
-# .env
+# Environment files
 .env
+env*
+.env.*
+!.env.example

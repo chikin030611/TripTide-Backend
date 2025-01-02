@@ -8,6 +8,13 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
 
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+    livereload:
+      enabled: true
+
 ---
 spring:
   config:
@@ -59,7 +66,8 @@ server:
 
 jwt:
   secret: ${JWT_SECRET}
-  expiration: ${JWT_EXPIRATION:86400000}
+  expiration: ${JWT_EXPIRATION:3600000}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
 
 frontend:
   url: ${FRONTEND_URL:http://localhost:3000}

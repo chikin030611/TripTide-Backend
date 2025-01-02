@@ -22,6 +22,6 @@ docker exec -it triptide-backend-db-1 psql -U postgres -d triptide
 # Staging
 ### Run the application
 ```
-./scripts/deploy-staging.sh
+bash ./scripts/deploy-staging.sh
 ```
 
