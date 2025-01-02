@@ -56,4 +56,9 @@ public class AppUserService implements UserDetailsService {
     public boolean existsByEmail(String email) {
         return appUserRepository.existsByEmail(email);
     }
+
+    public AppUser findByEmail(String email) {
+        return appUserRepository.findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
 }
