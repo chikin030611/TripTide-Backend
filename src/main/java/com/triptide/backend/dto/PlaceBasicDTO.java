@@ -1,16 +1,18 @@
 package com.triptide.backend.dto;
 
-import java.util.List;
-
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PlaceBasicDTO {
     private String placeId;
     private String name;
-    private List<String> types;
+    private String[] tags;
     private String photoUrl;
     private Double rating;
 } 

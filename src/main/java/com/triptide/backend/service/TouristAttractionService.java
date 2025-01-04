@@ -8,11 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.triptide.backend.dto.PlaceBasicDTO;
-import com.triptide.backend.model.TouristAttraction;
-import com.triptide.backend.repository.TouristAttractionRepository;
-import com.triptide.backend.repository.RestaurantRepository;
-import com.triptide.backend.repository.LodgingRepository;
 import com.triptide.backend.model.BasePlace;
+import com.triptide.backend.repository.LodgingRepository;
+import com.triptide.backend.repository.RestaurantRepository;
+import com.triptide.backend.repository.TouristAttractionRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -61,7 +60,7 @@ public class TouristAttractionService {
         return PlaceBasicDTO.builder()
             .placeId(place.getPlaceId())
             .name(place.getName())
-            .types(place.getTypes())
+            .tags(place.getTags())
             .photoUrl(photoUrl)
             .rating(rating)
             .build();
