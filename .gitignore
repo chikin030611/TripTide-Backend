@@ -49,3 +49,5 @@ postgres-data/
 env*
 .env.*
 !.env.example
+
+/scripts/
