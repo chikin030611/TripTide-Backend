@@ -58,6 +58,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(
                     "/api/auth/**",
+                    "/api/places/**",
                     "/error",
                     "/actuator/health"
                 ).permitAll()

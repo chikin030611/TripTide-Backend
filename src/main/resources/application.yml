@@ -71,3 +71,8 @@ jwt:
 
 frontend:
   url: ${FRONTEND_URL:http://localhost:3000}
+
+google:
+  places:
+    api:
+      key: ${GOOGLE_PLACES_API_KEY}

@@ -1,0 +1,177 @@
+[
+    {
+      "id": "ChIJd3wXPZAABDQRDFz86-Qpbto",
+      "name": "M+",
+      "types": [
+        "museum",
+        "point_of_interest",
+        "establishment"
+      ],
+      "address": "38 Museum Dr, West Kowloon, Hong Kong",
+      "rating": 4.2,
+      "openingHours": {
+        "openNow": false,
+        "periods": [
+          {
+            "open": {
+              "day": 0,
+              "hour": 10,
+              "minute": 0,
+              "date": {
+                "year": 2025,
+                "month": 1,
+                "day": 5
+              }
+            },
+            "close": {
+              "day": 0,
+              "hour": 18,
+              "minute": 0,
+              "date": {
+                "year": 2025,
+                "month": 1,
+                "day": 5
+              }
+            }
+          },
+          {
+            "open": {
+              "day": 2,
+              "hour": 10,
+              "minute": 0,
+              "date": {
+                "year": 2025,
+                "month": 1,
+                "day": 7
+              }
+            },
+            "close": {
+              "day": 2,
+              "hour": 18,
+              "minute": 0,
+              "date": {
+                "year": 2025,
+                "month": 1,
+                "day": 7
+              }
+            }
+          },
+          {
+            "open": {
+              "day": 3,
+              "hour": 10,
+              "minute": 0,
+              "date": {
+                "year": 2025,
+                "month": 1,
+                "day": 8
+              }
+            },
+            "close": {
+              "day": 3,
+              "hour": 18,
+              "minute": 0,
+              "date": {
+                "year": 2025,
+                "month": 1,
+                "day": 8
+              }
+            }
+          },
+          {
+            "open": {
+              "day": 4,
+              "hour": 10,
+              "minute": 0,
+              "date": {
+                "year": 2025,
+                "month": 1,
+                "day": 9
+              }
+            },
+            "close": {
+              "day": 4,
+              "hour": 18,
+              "minute": 0,
+              "date": {
+                "year": 2025,
+                "month": 1,
+                "day": 9
+              }
+            }
+          },
+          {
+            "open": {
+              "day": 5,
+              "hour": 10,
+              "minute": 0,
+              "date": {
+                "year": 2025,
+                "month": 1,
+                "day": 10
+              }
+            },
+            "close": {
+              "day": 5,
+              "hour": 22,
+              "minute": 0,
+              "date": {
+                "year": 2025,
+                "month": 1,
+                "day": 10
+              }
+            }
+          },
+          {
+            "open": {
+              "day": 6,
+              "hour": 10,
+              "minute": 0,
+              "date": {
+                "year": 2025,
+                "month": 1,
+                "day": 4
+              }
+            },
+            "close": {
+              "day": 6,
+              "hour": 18,
+              "minute": 0,
+              "date": {
+                "year": 2025,
+                "month": 1,
+                "day": 4
+              }
+            }
+          }
+        ],
+        "weekdayDescriptions": [
+          "Monday: Closed",
+          "Tuesday: 10:00 AM – 6:00 PM",
+          "Wednesday: 10:00 AM – 6:00 PM",
+          "Thursday: 10:00 AM – 6:00 PM",
+          "Friday: 10:00 AM – 10:00 PM",
+          "Saturday: 10:00 AM – 6:00 PM",
+          "Sunday: 10:00 AM – 6:00 PM"
+        ],
+        "nextOpenTime": "2025-01-05T02:00:00Z"
+      },
+      "description": null,
+      "photos": [
+        "https://places.googleapis.com/v1/places/ChIJd3wXPZAABDQRDFz86-Qpbto/photos/AWYs27x2HCzvNBNVZ9fchBgoagpDWDSZuq7hqlebYOAv8PuRSPchIsp7YA9vW7NKMBC8-H2f-r2IH_qdustPl7RqonCZphF1bl8OYL3P4gJ5dHusW3dPseNNkRzG3fHtqC3l4Wbt1M5xoKNqW3PDMEwKyu6tT_jiju229gDR/media?maxHeightPx=4000&maxWidthPx=2800&key=",
+        "https://places.googleapis.com/v1/places/ChIJd3wXPZAABDQRDFz86-Qpbto/photos/AWYs27xk8RHBiyvUGawBlzGoZvLrA7YxV9MmrIAD0g-HF1dGkaOPvbs9h7TnbuXtSqKDEhbUzdyJW8K3eaR8JGnv6o_WEUWQ4M7d0Pv1ubsjGicbOrHGbS1U3WkVsXGXiCkN3KSaqw8jAMToHhG1-UHDwIxbQaKlI6MOWO1n/media?maxHeightPx=4000&maxWidthPx=2800&key=",
+        "https://places.googleapis.com/v1/places/ChIJd3wXPZAABDQRDFz86-Qpbto/photos/AWYs27yQ926zR1cgGittW_pP99XneJNSFHvpZXHPMCrLArit6aN760fo9HBGfnk1rLDYehFvTr4gXNG-lr_pIX7QuKN9WMUoR7NOaPS-vMzA1A_AX9C0seik04YprbyEBKs1D-8i85CPib2dgmGFrq4-0VZ3twSbV0jH_uYa/media?maxHeightPx=4000&maxWidthPx=2800&key=",
+        "https://places.googleapis.com/v1/places/ChIJd3wXPZAABDQRDFz86-Qpbto/photos/AWYs27wDNUiPIGwJwG6jg1m0awUFxfljs1ww01Ccbc9J8ux2DxbEUbS0kI_0VMKCneUY2wnabPmhxlvU8LkjFawncHkmw3mdratTitfqpiMMkvi6Q0SXewAV1iSNrZwhFZe5Ossnk64MQKvK4rpQeLewfTk5hoVH3nuBvRxV/media?maxHeightPx=4000&maxWidthPx=2800&key=",
+        "https://places.googleapis.com/v1/places/ChIJd3wXPZAABDQRDFz86-Qpbto/photos/AWYs27xbXzNQdCgYLiliP3yrvjxu8WUi0xdnWpEzefIrArkPuaPbgTlKCRyj_OVKpC3Zbg8IBKWZfL9eFKODZIQ9YMdvJwO-qQuAOXPrI_W1E5YqIUImkM0sRD4yoBs5sm95w6xxu2JmEMvtL6jdVMD1iY6UKqqa26N7_iEf/media?maxHeightPx=4000&maxWidthPx=2800&key=",
+        "https://places.googleapis.com/v1/places/ChIJd3wXPZAABDQRDFz86-Qpbto/photos/AWYs27wJii9isiZIEVUwYBLoldBw8BHELdCwP-1xURT5qpe4sE0XcISNY-X6sJbUG6IXTdF5aOiJz0wmhZGua11ynQhwexHFvdXeOjqncZaHpvKKOTlKL6xzMBuagw8BehUCLKZ-teKty7ls6umicSFgAyC53ewOVHKOVsn7/media?maxHeightPx=4000&maxWidthPx=2800&key=",
+        "https://places.googleapis.com/v1/places/ChIJd3wXPZAABDQRDFz86-Qpbto/photos/AWYs27xgWYh3WSOdmMkqxgCEbT_dN7gjxLRUrLQGHLwdaE9GjZwLlwmEysPMxfPoNfjcTgXIX9XPEdwh67Tcc0_20J7WwCaqiwKeR2GqqZl6C21gGzyIHpCgwVDu63fqukQoCNZc_iQ1WT-3fMsgAwU4UGmsoB96G-5fwgMt/media?maxHeightPx=4000&maxWidthPx=2800&key=",
+        "https://places.googleapis.com/v1/places/ChIJd3wXPZAABDQRDFz86-Qpbto/photos/AWYs27wktXiS9FlZg7QCkNCSITPzy0P9zj1WJbWA6sQ4-RXn89k-AMpAa47EWW2txCQhBhuKZz12elAAnAJAHrAtU-muGI48VckoOggWPq3sPDLQYpgvAozmUzEy6t6qJUKtYiJvjQUto3BtEIRtND7PlRG4_1l5defTgbVe/media?maxHeightPx=4000&maxWidthPx=2800&key=",
+        "https://places.googleapis.com/v1/places/ChIJd3wXPZAABDQRDFz86-Qpbto/photos/AWYs27whR9sdkF-Iy7BIR4lH2u8gSnXDN96gkD5lq68o9SkPQcIQHTVPy68KA3OLOoUa4QOaZrVPxAsjaKA0bhuUxDZAyJIaMwi6cMA7CWTTIihZd-RZggmhMp6be3nYVKuglZxJBIouCPmLxdRzLry8oFPzG98xoL3lVTBO/media?maxHeightPx=4000&maxWidthPx=2800&key=",
+        "https://places.googleapis.com/v1/places/ChIJd3wXPZAABDQRDFz86-Qpbto/photos/AWYs27xKfahTmLkF9kbAy7YUGuHGcQuWqYFqTOD_NounUAnifx5lfvuZYjVD_XlCS_Ax-5EXxnmZA-8FgWCb5l_NFqu_2gRJydqPLqykietgQ8UxZnfhWQR_B8ePBLY8S5bioQhRP3NvW5XwI7gTL22pkjcmUOuWNhTk9w7Z/media?maxHeightPx=4000&maxWidthPx=2800&key="
+      ],
+      "location": {
+        "latitude": 22.300504399999998,
+        "longitude": 114.15949499999999
+      }
+    }
+  ]
