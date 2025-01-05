@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.triptide.backend.dto.PlaceBasicDTO;
 import com.triptide.backend.model.BasePlace;
+import com.triptide.backend.model.TouristAttraction;
+import com.triptide.backend.model.Tag;
 import com.triptide.backend.repository.LodgingRepository;
 import com.triptide.backend.repository.RestaurantRepository;
 import com.triptide.backend.repository.TouristAttractionRepository;
@@ -57,10 +59,18 @@ public class TouristAttractionService {
 
         Double rating = placeDetails.has("rating") ? placeDetails.get("rating").asDouble() : null;
 
+        // Convert TouristAttraction tags to string array
+        String[] tagNames = null;
+        if (place instanceof TouristAttraction) {
+            tagNames = ((TouristAttraction) place).getTags().stream()
+                .map(Tag::getName)
+                .toArray(String[]::new);
+        }
+
         return PlaceBasicDTO.builder()
             .placeId(place.getPlaceId())
             .name(place.getName())
-            .tags(place.getTags())
+            .tags(tagNames)
             .photoUrl(photoUrl)
             .rating(rating)
             .build();
