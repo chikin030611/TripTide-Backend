@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.triptide.backend.dto.PlaceBasicDTO;
+import com.triptide.backend.dto.PlaceDetailedDTO;
 import com.triptide.backend.service.TouristAttractionService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,5 +28,10 @@ public class PlaceController {
             @RequestParam(defaultValue = "5") int limit) {
         List<PlaceBasicDTO> places = touristAttractionService.getPlacesByType(type, limit);
         return ResponseEntity.ok(places);
+    }
+
+    @GetMapping("/{placeId}/details")
+    public PlaceDetailedDTO getPlaceDetails(@PathVariable String placeId) {
+        return touristAttractionService.getPlaceDetails(placeId);
     }
 } 
