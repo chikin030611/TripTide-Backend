@@ -156,4 +156,17 @@ public class TouristAttractionService {
                 .build())
             .build();
     }
+
+    public List<PlaceBasicDTO> searchPlacesByName(String name, int page) {
+        // Get paginated results from tourist attractions
+        PageRequest pageRequest = PageRequest.of(page, 10); // limit of 10 items per page
+        List<BasePlace> matchingPlaces = new ArrayList<>(
+            touristAttractionRepository.findByNameContainingIgnoreCase(name, pageRequest).getContent()
+        );
+
+        // Convert all matching places to DTOs
+        return matchingPlaces.stream()
+            .map(this::convertToBasicDTO)
+            .collect(Collectors.toList());
+    }
 } 

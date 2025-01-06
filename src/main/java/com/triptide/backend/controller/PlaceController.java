@@ -34,4 +34,12 @@ public class PlaceController {
     public PlaceDetailedDTO getPlaceDetails(@PathVariable String placeId) {
         return touristAttractionService.getPlaceDetails(placeId);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<PlaceBasicDTO>> searchPlaces(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int page) {
+        List<PlaceBasicDTO> matchingPlaces = touristAttractionService.searchPlacesByName(name, page);
+        return ResponseEntity.ok(matchingPlaces);
+    }
 } 
