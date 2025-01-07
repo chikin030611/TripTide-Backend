@@ -39,5 +39,19 @@ public class GooglePlacesService {
             photoReference
         );
     }
+
+    public JsonNode getDetailedPlaceData(String placeId) {
+        String url = String.format(
+            "https://places.googleapis.com/v1/places/%s?fields=photos,rating,currentOpeningHours,formattedAddress,editorialSummary,location&key=%s",
+            placeId, apiKey
+        );
+        
+        String response = restTemplate.getForObject(url, String.class);
+        try {
+            return objectMapper.readTree(response);
+        } catch (Exception e) {
+            throw new RuntimeException("Error parsing Google Places API response", e);
+        }
+    }
 } 
 

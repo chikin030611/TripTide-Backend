@@ -1,9 +1,12 @@
 package com.triptide.backend.model;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,12 +16,6 @@ import lombok.Setter;
 @Setter
 public class TouristAttraction extends BasePlace {
     private String category;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
     
     @ManyToMany
     @JoinTable(

@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.triptide.backend.dto.LoginRequest;
 import com.triptide.backend.dto.RegistrationRequest;
 import com.triptide.backend.model.AppUser;
-import com.triptide.backend.model.AppUserService;
 import com.triptide.backend.security.JwtService;
+import com.triptide.backend.service.AppUserService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

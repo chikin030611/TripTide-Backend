@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.triptide.backend.model.AppUser;
-import com.triptide.backend.model.AppUserService;
+import com.triptide.backend.service.AppUserService;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,4 +1,4 @@
-package com.triptide.backend.model;
+package com.triptide.backend.service;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.User;
@@ -9,6 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.triptide.backend.dto.LoginRequest;
+import com.triptide.backend.model.AppUser;
+import com.triptide.backend.repository.AppUserRepository;
 
 import lombok.AllArgsConstructor;
 

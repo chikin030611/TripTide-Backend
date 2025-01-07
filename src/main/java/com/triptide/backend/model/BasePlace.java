@@ -3,8 +3,8 @@ package com.triptide.backend.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -19,4 +19,10 @@ public abstract class BasePlace {
     
     @Column(nullable = false)
     private String name;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 } 
