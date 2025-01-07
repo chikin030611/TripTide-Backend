@@ -10,6 +10,4 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Lodging extends BasePlace {
-    private String category; // e.g., hotel, hostel, resort
-    // Add lodging-specific fields
 } 
