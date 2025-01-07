@@ -16,6 +16,7 @@ import com.triptide.backend.dto.PlaceDetailedDTO.OpeningHours;
 import com.triptide.backend.dto.PlaceDetailedDTO.Period;
 import com.triptide.backend.dto.PlaceDetailedDTO.TimeSlot;
 import com.triptide.backend.model.BasePlace;
+import com.triptide.backend.model.Lodging;
 import com.triptide.backend.model.Restaurant;
 import com.triptide.backend.model.Tag;
 import com.triptide.backend.model.TouristAttraction;
@@ -67,8 +68,8 @@ public class PlaceService {
             return ((Restaurant) place).getTags();
         } else if (place instanceof TouristAttraction) {
             return ((TouristAttraction) place).getTags();
-        // } else if (place instanceof Lodging) {
-        //     return ((Lodging) place).getTags();
+        } else if (place instanceof Lodging) {
+            return ((Lodging) place).getTags();
         }
         return Set.of();
     }
@@ -105,7 +106,9 @@ public class PlaceService {
             .map(p -> (BasePlace) p)
             .orElseGet(() -> restaurantRepository.findByPlaceId(placeId)
                 .map(p -> (BasePlace) p)
-                .orElseThrow(() -> new RuntimeException("Place not found: " + placeId)));
+                .orElseGet(() -> lodgingRepository.findByPlaceId(placeId)
+                    .map(p -> (BasePlace) p)
+                    .orElseThrow(() -> new RuntimeException("Place not found: " + placeId))));
 
         // Get detailed data from Google API
         JsonNode placeDetails = googlePlacesService.getDetailedPlaceData(placeId);
@@ -179,6 +182,10 @@ public class PlaceService {
         );
         matchingPlaces.addAll(
             restaurantRepository.findByNameContainingIgnoreCase(name, pageRequest).getContent()
+        );
+
+        matchingPlaces.addAll(
+            lodgingRepository.findByNameContainingIgnoreCase(name, pageRequest).getContent()
         );
 
         // Convert all matching places to DTOs
