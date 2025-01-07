@@ -2,6 +2,7 @@ package com.triptide.backend.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,7 @@ import com.triptide.backend.dto.PlaceDetailedDTO.OpeningHours;
 import com.triptide.backend.dto.PlaceDetailedDTO.Period;
 import com.triptide.backend.dto.PlaceDetailedDTO.TimeSlot;
 import com.triptide.backend.model.BasePlace;
+import com.triptide.backend.model.Restaurant;
 import com.triptide.backend.model.Tag;
 import com.triptide.backend.model.TouristAttraction;
 import com.triptide.backend.repository.LodgingRepository;
@@ -25,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class TouristAttractionService {
+public class PlaceService {
     
     private final TouristAttractionRepository touristAttractionRepository;
     private final RestaurantRepository restaurantRepository;
@@ -37,13 +39,19 @@ public class TouristAttractionService {
         
         switch (type.toLowerCase()) {
             case "tourist_attraction":
-                places = touristAttractionRepository.findAll(PageRequest.of(0, limit)).getContent();
+                long touristAttractionCount = touristAttractionRepository.count();
+                int randomPageTA = (int) (Math.random() * (touristAttractionCount / limit));
+                places = touristAttractionRepository.findAll(PageRequest.of(randomPageTA, limit)).getContent();
                 break;
             case "restaurant":
-                places = restaurantRepository.findAll(PageRequest.of(0, limit)).getContent();
+                long restaurantCount = restaurantRepository.count();
+                int randomPageR = (int) (Math.random() * (restaurantCount / limit));
+                places = restaurantRepository.findAll(PageRequest.of(randomPageR, limit)).getContent();
                 break;
             case "lodging":
-                places = lodgingRepository.findAll(PageRequest.of(0, limit)).getContent();
+                long lodgingCount = lodgingRepository.count();
+                int randomPageL = (int) (Math.random() * (lodgingCount / limit));
+                places = lodgingRepository.findAll(PageRequest.of(randomPageL, limit)).getContent();
                 break;
             default:
                 throw new IllegalArgumentException("Invalid place type: " + type);
@@ -52,6 +60,23 @@ public class TouristAttractionService {
         return places.stream()
             .map(this::convertToBasicDTO)
             .collect(Collectors.toList());
+    }
+
+    private Set<Tag> getTagsFromPlace(BasePlace place) {
+        if (place instanceof Restaurant) {
+            return ((Restaurant) place).getTags();
+        } else if (place instanceof TouristAttraction) {
+            return ((TouristAttraction) place).getTags();
+        // } else if (place instanceof Lodging) {
+        //     return ((Lodging) place).getTags();
+        }
+        return Set.of();
+    }
+
+    private String[] convertTagsToArray(Set<Tag> tags) {
+        return tags.stream()
+            .map(Tag::getName)
+            .toArray(String[]::new);
     }
 
     private PlaceBasicDTO convertToBasicDTO(BasePlace place) {
@@ -64,14 +89,7 @@ public class TouristAttractionService {
         }
 
         Double rating = placeDetails.has("rating") ? placeDetails.get("rating").asDouble() : null;
-
-        // Convert TouristAttraction tags to string array
-        String[] tagNames = null;
-        if (place instanceof TouristAttraction) {
-            tagNames = ((TouristAttraction) place).getTags().stream()
-                .map(Tag::getName)
-                .toArray(String[]::new);
-        }
+        String[] tagNames = convertTagsToArray(getTagsFromPlace(place));
 
         return PlaceBasicDTO.builder()
             .placeId(place.getPlaceId())
@@ -83,21 +101,15 @@ public class TouristAttractionService {
     }
 
     public PlaceDetailedDTO getPlaceDetails(String placeId) {
-        // Find the place in database
         BasePlace place = touristAttractionRepository.findByPlaceId(placeId)
-            .orElseThrow(() -> new RuntimeException("Place not found: " + placeId));
-
-        // Extract types
-        // Convert TouristAttraction tags to string array
-        String[] tagNames = null;
-        if (place instanceof TouristAttraction) {
-            tagNames = ((TouristAttraction) place).getTags().stream()
-                .map(Tag::getName)
-                .toArray(String[]::new);
-        }
+            .map(p -> (BasePlace) p)
+            .orElseGet(() -> restaurantRepository.findByPlaceId(placeId)
+                .map(p -> (BasePlace) p)
+                .orElseThrow(() -> new RuntimeException("Place not found: " + placeId)));
 
         // Get detailed data from Google API
         JsonNode placeDetails = googlePlacesService.getDetailedPlaceData(placeId);
+        String[] tagNames = convertTagsToArray(getTagsFromPlace(place));
 
         // Extract photo URLs
         List<String> photoUrls = new ArrayList<>();
@@ -160,8 +172,13 @@ public class TouristAttractionService {
     public List<PlaceBasicDTO> searchPlacesByName(String name, int page) {
         // Get paginated results from tourist attractions
         PageRequest pageRequest = PageRequest.of(page, 10); // limit of 10 items per page
-        List<BasePlace> matchingPlaces = new ArrayList<>(
+        List<BasePlace> matchingPlaces = new ArrayList<>();
+
+        matchingPlaces.addAll(
             touristAttractionRepository.findByNameContainingIgnoreCase(name, pageRequest).getContent()
+        );
+        matchingPlaces.addAll(
+            restaurantRepository.findByNameContainingIgnoreCase(name, pageRequest).getContent()
         );
 
         // Convert all matching places to DTOs
