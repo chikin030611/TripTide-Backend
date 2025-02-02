@@ -1,6 +1,9 @@
 package com.triptide.backend.controller;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,8 +29,13 @@ public class PlaceController {
     public ResponseEntity<List<PlaceBasicDTO>> getPlaces(
             @RequestParam String type,
             @RequestParam(defaultValue = "5") int limit,
-            @RequestParam(required = false) String tag) {
-        List<PlaceBasicDTO> places = placeService.getPlacesByType(type, limit, tag);
+            @RequestParam(required = false) String tags) {
+        Set<String> tagSet = tags != null ? 
+            Arrays.stream(tags.split(","))
+                .map(String::trim)
+                .collect(Collectors.toSet()) 
+            : null;
+        List<PlaceBasicDTO> places = placeService.getPlacesByType(type, limit, tagSet);
         return ResponseEntity.ok(places);
     }
 

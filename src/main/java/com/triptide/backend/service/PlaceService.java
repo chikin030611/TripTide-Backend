@@ -35,13 +35,13 @@ public class PlaceService {
     private final LodgingRepository lodgingRepository;
     private final GooglePlacesService googlePlacesService;
 
-    public List<PlaceBasicDTO> getPlacesByType(String type, int limit, String tag) {
+    public List<PlaceBasicDTO> getPlacesByType(String type, int limit, Set<String> tags) {
         List<? extends BasePlace> places;
         
         switch (type.toLowerCase()) {
             case "tourist_attraction":
-                if (tag != null) {
-                    places = touristAttractionRepository.findByTagsName(tag, PageRequest.of(0, limit)).getContent();
+                if (tags != null && !tags.isEmpty()) {
+                    places = touristAttractionRepository.findByTagsNameIn(tags, tags.size(), PageRequest.of(0, limit)).getContent();
                 } else {
                     long touristAttractionCount = touristAttractionRepository.count();
                     int randomPageTA = (int) (Math.random() * (touristAttractionCount / limit));
@@ -49,8 +49,8 @@ public class PlaceService {
                 }
                 break;
             case "restaurant":
-                if (tag != null) {
-                    places = restaurantRepository.findByTagsName(tag, PageRequest.of(0, limit)).getContent();
+                if (tags != null && !tags.isEmpty()) {
+                    places = restaurantRepository.findByTagsNameIn(tags, tags.size(), PageRequest.of(0, limit)).getContent();
                 } else {
                     long restaurantCount = restaurantRepository.count();
                     int randomPageR = (int) (Math.random() * (restaurantCount / limit));
@@ -58,8 +58,8 @@ public class PlaceService {
                 }
                 break;
             case "lodging":
-                if (tag != null) {
-                    places = lodgingRepository.findByTagsName(tag, PageRequest.of(0, limit)).getContent();
+                if (tags != null && !tags.isEmpty()) {
+                    places = lodgingRepository.findByTagsNameIn(tags, tags.size(), PageRequest.of(0, limit)).getContent();
                 } else {
                     long lodgingCount = lodgingRepository.count();
                     int randomPageL = (int) (Math.random() * (lodgingCount / limit));
