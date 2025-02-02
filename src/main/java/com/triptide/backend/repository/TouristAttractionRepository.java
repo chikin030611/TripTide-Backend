@@ -11,4 +11,5 @@ import com.triptide.backend.model.TouristAttraction;
 public interface TouristAttractionRepository extends JpaRepository<TouristAttraction, Long> {
     Optional<TouristAttraction> findByPlaceId(String placeId);
     Page<TouristAttraction> findByNameContainingIgnoreCase(String name, Pageable pageable);
+    Page<TouristAttraction> findByTagsName(String tagName, Pageable pageable);
 } 

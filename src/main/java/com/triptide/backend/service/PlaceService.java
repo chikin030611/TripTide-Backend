@@ -35,24 +35,36 @@ public class PlaceService {
     private final LodgingRepository lodgingRepository;
     private final GooglePlacesService googlePlacesService;
 
-    public List<PlaceBasicDTO> getPlacesByType(String type, int limit) {
+    public List<PlaceBasicDTO> getPlacesByType(String type, int limit, String tag) {
         List<? extends BasePlace> places;
         
         switch (type.toLowerCase()) {
             case "tourist_attraction":
-                long touristAttractionCount = touristAttractionRepository.count();
-                int randomPageTA = (int) (Math.random() * (touristAttractionCount / limit));
-                places = touristAttractionRepository.findAll(PageRequest.of(randomPageTA, limit)).getContent();
+                if (tag != null) {
+                    places = touristAttractionRepository.findByTagsName(tag, PageRequest.of(0, limit)).getContent();
+                } else {
+                    long touristAttractionCount = touristAttractionRepository.count();
+                    int randomPageTA = (int) (Math.random() * (touristAttractionCount / limit));
+                    places = touristAttractionRepository.findAll(PageRequest.of(randomPageTA, limit)).getContent();
+                }
                 break;
             case "restaurant":
-                long restaurantCount = restaurantRepository.count();
-                int randomPageR = (int) (Math.random() * (restaurantCount / limit));
-                places = restaurantRepository.findAll(PageRequest.of(randomPageR, limit)).getContent();
+                if (tag != null) {
+                    places = restaurantRepository.findByTagsName(tag, PageRequest.of(0, limit)).getContent();
+                } else {
+                    long restaurantCount = restaurantRepository.count();
+                    int randomPageR = (int) (Math.random() * (restaurantCount / limit));
+                    places = restaurantRepository.findAll(PageRequest.of(randomPageR, limit)).getContent();
+                }
                 break;
             case "lodging":
-                long lodgingCount = lodgingRepository.count();
-                int randomPageL = (int) (Math.random() * (lodgingCount / limit));
-                places = lodgingRepository.findAll(PageRequest.of(randomPageL, limit)).getContent();
+                if (tag != null) {
+                    places = lodgingRepository.findByTagsName(tag, PageRequest.of(0, limit)).getContent();
+                } else {
+                    long lodgingCount = lodgingRepository.count();
+                    int randomPageL = (int) (Math.random() * (lodgingCount / limit));
+                    places = lodgingRepository.findAll(PageRequest.of(randomPageL, limit)).getContent();
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Invalid place type: " + type);

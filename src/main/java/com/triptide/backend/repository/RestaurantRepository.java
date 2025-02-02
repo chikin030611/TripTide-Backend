@@ -11,4 +11,5 @@ import com.triptide.backend.model.Restaurant;
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
     Optional<Restaurant> findByPlaceId(String placeId);
     Page<Restaurant> findByNameContainingIgnoreCase(String name, Pageable pageable);
+    Page<Restaurant> findByTagsName(String tag, Pageable pageable);
 } 

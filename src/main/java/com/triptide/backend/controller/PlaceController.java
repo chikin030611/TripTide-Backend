@@ -25,8 +25,9 @@ public class PlaceController {
     @GetMapping
     public ResponseEntity<List<PlaceBasicDTO>> getPlaces(
             @RequestParam String type,
-            @RequestParam(defaultValue = "5") int limit) {
-        List<PlaceBasicDTO> places = placeService.getPlacesByType(type, limit);
+            @RequestParam(defaultValue = "5") int limit,
+            @RequestParam(required = false) String tag) {
+        List<PlaceBasicDTO> places = placeService.getPlacesByType(type, limit, tag);
         return ResponseEntity.ok(places);
     }
 
