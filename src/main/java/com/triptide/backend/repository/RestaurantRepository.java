@@ -16,6 +16,6 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
     Page<Restaurant> findByNameContainingIgnoreCase(String name, Pageable pageable);
     Page<Restaurant> findByTagsName(String tag, Pageable pageable);
 
-    @Query("SELECT DISTINCT r FROM Restaurant r JOIN r.tags tag WHERE tag.name IN :tagNames GROUP BY r HAVING COUNT(DISTINCT tag.name) = :tagCount")
+    @Query("SELECT DISTINCT t FROM Restaurant t JOIN t.tags tag WHERE tag.name IN :tagNames")
     Page<Restaurant> findByTagsNameIn(@Param("tagNames") Set<String> tagNames, @Param("tagCount") long tagCount, Pageable pageable);
 } 

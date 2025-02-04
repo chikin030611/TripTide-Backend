@@ -16,6 +16,6 @@ public interface TouristAttractionRepository extends JpaRepository<TouristAttrac
     Page<TouristAttraction> findByNameContainingIgnoreCase(String name, Pageable pageable);
     Page<TouristAttraction> findByTagsName(String tagName, Pageable pageable);
     
-    @Query("SELECT DISTINCT t FROM TouristAttraction t JOIN t.tags tag WHERE tag.name IN :tagNames GROUP BY t HAVING COUNT(DISTINCT tag.name) = :tagCount")
+    @Query("SELECT DISTINCT t FROM TouristAttraction t JOIN t.tags tag WHERE tag.name IN :tagNames")
     Page<TouristAttraction> findByTagsNameIn(@Param("tagNames") Set<String> tagNames, @Param("tagCount") long tagCount, Pageable pageable);
 } 
