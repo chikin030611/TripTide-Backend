@@ -51,4 +51,12 @@ public class PlaceController {
         List<PlaceBasicDTO> matchingPlaces = placeService.searchPlacesByName(name, page);
         return ResponseEntity.ok(matchingPlaces);
     }
+
+    @GetMapping("/tags")
+    public ResponseEntity<Set<String>> getAllTags(@RequestParam(required = false) String type) {
+        if (type != null) {
+            return ResponseEntity.ok(placeService.getAllUniqueTagsByType(type));
+        }
+        return ResponseEntity.ok(placeService.getAllUniqueTags());
+    }
 } 

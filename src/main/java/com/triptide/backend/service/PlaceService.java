@@ -1,6 +1,8 @@
 package com.triptide.backend.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -204,5 +206,52 @@ public class PlaceService {
         return matchingPlaces.stream()
             .map(this::convertToBasicDTO)
             .collect(Collectors.toList());
+    }
+
+    public Set<String> getAllUniqueTags() {
+        Set<String> allTags = new HashSet<>();
+        
+        // Collect tags from all types of places
+        touristAttractionRepository.findAll().stream()
+            .map(this::getTagsFromPlace)
+            .forEach(tags -> tags.forEach(tag -> allTags.add(tag.getName())));
+            
+        restaurantRepository.findAll().stream()
+            .map(this::getTagsFromPlace)
+            .forEach(tags -> tags.forEach(tag -> allTags.add(tag.getName())));
+            
+        lodgingRepository.findAll().stream()
+            .map(this::getTagsFromPlace)
+            .forEach(tags -> tags.forEach(tag -> allTags.add(tag.getName())));
+            
+        return allTags;
+    }
+
+    public Set<String> getAllUniqueTagsByType(String type) {
+        Set<String> allTags = new HashSet<>();
+        switch (type.toLowerCase()) {
+            case "tourist_attraction":
+                allTags = touristAttractionRepository.findAll().stream()
+                    .map(this::getTagsFromPlace)
+                    .flatMap(Collection::stream)
+                    .map(Tag::getName)
+                    .collect(Collectors.toSet());
+                break;
+            case "restaurant":
+                allTags = restaurantRepository.findAll().stream()
+                    .map(this::getTagsFromPlace)
+                    .flatMap(Collection::stream)
+                    .map(Tag::getName)
+                    .collect(Collectors.toSet());
+                break;
+            case "lodging":
+                allTags = lodgingRepository.findAll().stream()
+                    .map(this::getTagsFromPlace)
+                    .flatMap(Collection::stream)
+                    .map(Tag::getName)
+                    .collect(Collectors.toSet());
+                break;
+        }
+        return allTags;
     }
 } 
