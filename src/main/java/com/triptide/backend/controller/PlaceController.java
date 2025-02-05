@@ -47,8 +47,14 @@ public class PlaceController {
     @GetMapping("/search")
     public ResponseEntity<List<PlaceBasicDTO>> searchPlaces(
             @RequestParam String name,
-            @RequestParam(defaultValue = "0") int page) {
-        List<PlaceBasicDTO> matchingPlaces = placeService.searchPlacesByName(name, page);
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) String tags) {
+        Set<String> tagSet = tags != null ? 
+            Arrays.stream(tags.split(","))
+                .map(String::trim)
+                .collect(Collectors.toSet()) 
+            : null;
+        List<PlaceBasicDTO> matchingPlaces = placeService.searchPlacesByName(name, page, tagSet);
         return ResponseEntity.ok(matchingPlaces);
     }
 

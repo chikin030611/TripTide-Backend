@@ -18,4 +18,13 @@ public interface TouristAttractionRepository extends JpaRepository<TouristAttrac
     
     @Query("SELECT DISTINCT t FROM TouristAttraction t JOIN t.tags tag WHERE tag.name IN :tagNames")
     Page<TouristAttraction> findByTagsNameIn(@Param("tagNames") Set<String> tagNames, @Param("tagCount") long tagCount, Pageable pageable);
+
+    @Query("SELECT DISTINCT t FROM TouristAttraction t JOIN t.tags tag " +
+           "WHERE LOWER(t.name) LIKE LOWER(CONCAT('%', :name, '%')) " +
+           "AND tag.name IN :tagNames")
+    Page<TouristAttraction> findByNameContainingIgnoreCaseAndTagsNameIn(
+        @Param("name") String name, 
+        @Param("tagNames") Set<String> tagNames, 
+        Pageable pageable
+    );
 } 

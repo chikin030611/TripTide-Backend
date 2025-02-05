@@ -21,4 +21,11 @@ public interface LodgingRepository extends JpaRepository<Lodging, Long> {
     @Query("SELECT DISTINCT t FROM Lodging t JOIN t.tags tag WHERE tag.name IN :tagNames")
     Page<Lodging> findByTagsNameIn(@Param("tagNames") Set<String> tagNames, @Param("tagCount") long tagCount, Pageable pageable);
 
+    @Query("SELECT DISTINCT t FROM Lodging t JOIN t.tags tag WHERE tag.name IN :tagNames")
+    Page<Lodging> findByNameContainingIgnoreCaseAndTagsNameIn(
+        @Param("name") String name, 
+        @Param("tagNames") Set<String> tagNames, 
+        Pageable pageable
+    );
+
 } 

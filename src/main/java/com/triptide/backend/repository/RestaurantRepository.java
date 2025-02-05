@@ -18,4 +18,11 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
     @Query("SELECT DISTINCT t FROM Restaurant t JOIN t.tags tag WHERE tag.name IN :tagNames")
     Page<Restaurant> findByTagsNameIn(@Param("tagNames") Set<String> tagNames, @Param("tagCount") long tagCount, Pageable pageable);
+
+    @Query("SELECT DISTINCT t FROM Restaurant t JOIN t.tags tag WHERE tag.name IN :tagNames")
+    Page<Restaurant> findByNameContainingIgnoreCaseAndTagsNameIn(
+        @Param("name") String name, 
+        @Param("tagNames") Set<String> tagNames, 
+        Pageable pageable
+    );
 } 

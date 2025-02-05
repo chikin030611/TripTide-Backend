@@ -186,23 +186,34 @@ public class PlaceService {
             .build();
     }
 
-    public List<PlaceBasicDTO> searchPlacesByName(String name, int page) {
-        // Get paginated results from tourist attractions
+    public List<PlaceBasicDTO> searchPlacesByName(String name, int page, Set<String> tags) {
         PageRequest pageRequest = PageRequest.of(page, 10); // limit of 10 items per page
         List<BasePlace> matchingPlaces = new ArrayList<>();
 
-        matchingPlaces.addAll(
-            touristAttractionRepository.findByNameContainingIgnoreCase(name, pageRequest).getContent()
-        );
-        matchingPlaces.addAll(
-            restaurantRepository.findByNameContainingIgnoreCase(name, pageRequest).getContent()
-        );
+        if (tags != null && !tags.isEmpty()) {
+            // Search with both name and tags
+            matchingPlaces.addAll(
+                touristAttractionRepository.findByNameContainingIgnoreCaseAndTagsNameIn(name, tags, pageRequest).getContent()
+            );
+            matchingPlaces.addAll(
+                restaurantRepository.findByNameContainingIgnoreCaseAndTagsNameIn(name, tags, pageRequest).getContent()
+            );
+            matchingPlaces.addAll(
+                lodgingRepository.findByNameContainingIgnoreCaseAndTagsNameIn(name, tags, pageRequest).getContent()
+            );
+        } else {
+            // Search by name only
+            matchingPlaces.addAll(
+                touristAttractionRepository.findByNameContainingIgnoreCase(name, pageRequest).getContent()
+            );
+            matchingPlaces.addAll(
+                restaurantRepository.findByNameContainingIgnoreCase(name, pageRequest).getContent()
+            );
+            matchingPlaces.addAll(
+                lodgingRepository.findByNameContainingIgnoreCase(name, pageRequest).getContent()
+            );
+        }
 
-        matchingPlaces.addAll(
-            lodgingRepository.findByNameContainingIgnoreCase(name, pageRequest).getContent()
-        );
-
-        // Convert all matching places to DTOs
         return matchingPlaces.stream()
             .map(this::convertToBasicDTO)
             .collect(Collectors.toList());
