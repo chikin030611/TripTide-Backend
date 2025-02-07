@@ -94,9 +94,7 @@ public class PlaceService {
             .toArray(String[]::new);
     }
 
-    private PlaceBasicDTO convertToBasicDTO(BasePlace place) {
-        JsonNode placeDetails = googlePlacesService.getBasicPlaceDetails(place.getPlaceId());
-        
+    private PlaceBasicDTO convertToBasicDTO(BasePlace place, JsonNode placeDetails) {
         String photoUrl = null;
         if (placeDetails.has("photos") && placeDetails.get("photos").size() > 0) {
             String photoReference = placeDetails.get("photos").get(0).get("name").asText();
@@ -105,14 +103,34 @@ public class PlaceService {
 
         Double rating = placeDetails.has("rating") ? placeDetails.get("rating").asDouble() : null;
         String[] tagNames = convertTagsToArray(getTagsFromPlace(place));
+        String type = formatPlaceType(place);
+        String ratingCount = placeDetails.has("userRatingCount") ? placeDetails.get("userRatingCount").asText() : null;
 
         return PlaceBasicDTO.builder()
             .placeId(place.getPlaceId())
             .name(place.getName())
+            .type(type)
             .tags(tagNames)
             .photoUrl(photoUrl)
             .rating(rating)
+            .ratingCount(ratingCount)
             .build();
+    }
+
+    private PlaceBasicDTO convertToBasicDTO(BasePlace place) {
+        JsonNode placeDetails = googlePlacesService.getBasicPlaceDetails(place.getPlaceId());
+        return convertToBasicDTO(place, placeDetails);
+    }
+
+    private String formatPlaceType(BasePlace place) {
+        if (place instanceof TouristAttraction) {
+            return "tourist_attraction";
+        } else if (place instanceof Restaurant) {
+            return "restaurant";
+        } else if (place instanceof Lodging) {
+            return "lodging";
+        }
+        return "unknown";
     }
 
     public PlaceDetailedDTO getPlaceDetails(String placeId) {
@@ -124,9 +142,8 @@ public class PlaceService {
                     .map(p -> (BasePlace) p)
                     .orElseThrow(() -> new RuntimeException("Place not found: " + placeId))));
 
-        // Get detailed data from Google API
+        // Get detailed data from Google API - single API call
         JsonNode placeDetails = googlePlacesService.getDetailedPlaceData(placeId);
-        String[] tagNames = convertTagsToArray(getTagsFromPlace(place));
 
         // Extract photo URLs
         List<String> photoUrls = new ArrayList<>();
@@ -157,13 +174,20 @@ public class PlaceService {
                 .build();
         }
 
+        String[] tagNames = convertTagsToArray(getTagsFromPlace(place));
+        Double rating = placeDetails.has("rating") ? placeDetails.get("rating").asDouble() : null;
+        String ratingCount = placeDetails.has("userRatingCount") ? 
+            placeDetails.get("userRatingCount").asText() : null;
+
         // Build and return the DTO
         return PlaceDetailedDTO.builder()
             .id(place.getPlaceId())
             .name(place.getName())
+            .type(formatPlaceType(place))
             .tags(tagNames)
+            .rating(rating)
+            .ratingCount(ratingCount)
             .address(placeDetails.get("formattedAddress").asText())
-            .rating(placeDetails.has("rating") ? placeDetails.get("rating").asDouble() : null)
             .openingHours(openingHours)
             .description(placeDetails.has("editorialSummary") ? 
                 placeDetails.get("editorialSummary").get("text").asText() : null)
