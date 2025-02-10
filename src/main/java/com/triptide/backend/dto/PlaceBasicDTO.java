@@ -12,7 +12,9 @@ import lombok.NoArgsConstructor;
 public class PlaceBasicDTO {
     private String placeId;
     private String name;
+    private String type;
     private String[] tags;
     private String photoUrl;
     private Double rating;
+    private String ratingCount;
 } 

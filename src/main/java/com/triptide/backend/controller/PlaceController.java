@@ -1,6 +1,9 @@
 package com.triptide.backend.controller;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,8 +28,14 @@ public class PlaceController {
     @GetMapping
     public ResponseEntity<List<PlaceBasicDTO>> getPlaces(
             @RequestParam String type,
-            @RequestParam(defaultValue = "5") int limit) {
-        List<PlaceBasicDTO> places = placeService.getPlacesByType(type, limit);
+            @RequestParam(defaultValue = "5") int limit,
+            @RequestParam(required = false) String tags) {
+        Set<String> tagSet = tags != null ? 
+            Arrays.stream(tags.split(","))
+                .map(String::trim)
+                .collect(Collectors.toSet()) 
+            : null;
+        List<PlaceBasicDTO> places = placeService.getPlacesByType(type, limit, tagSet);
         return ResponseEntity.ok(places);
     }
 
@@ -38,8 +47,22 @@ public class PlaceController {
     @GetMapping("/search")
     public ResponseEntity<List<PlaceBasicDTO>> searchPlaces(
             @RequestParam String name,
-            @RequestParam(defaultValue = "0") int page) {
-        List<PlaceBasicDTO> matchingPlaces = placeService.searchPlacesByName(name, page);
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) String tags) {
+        Set<String> tagSet = tags != null ? 
+            Arrays.stream(tags.split(","))
+                .map(String::trim)
+                .collect(Collectors.toSet()) 
+            : null;
+        List<PlaceBasicDTO> matchingPlaces = placeService.searchPlacesByName(name, page, tagSet);
         return ResponseEntity.ok(matchingPlaces);
+    }
+
+    @GetMapping("/tags")
+    public ResponseEntity<Set<String>> getAllTags(@RequestParam(required = false) String type) {
+        if (type != null) {
+            return ResponseEntity.ok(placeService.getAllUniqueTagsByType(type));
+        }
+        return ResponseEntity.ok(placeService.getAllUniqueTags());
     }
 } 

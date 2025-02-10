@@ -21,10 +21,10 @@ public class GooglePlacesService {
 
     public JsonNode getBasicPlaceDetails(String placeId) {
         String url = String.format(
-            "https://places.googleapis.com/v1/places/%s?fields=rating,photos&key=%s",
+            "https://places.googleapis.com/v1/places/%s?fields=rating,userRatingCount,photos&key=%s",
             placeId, apiKey
         );
-        
+
         String response = restTemplate.getForObject(url, String.class);
         try {
             return objectMapper.readTree(response);
@@ -35,14 +35,14 @@ public class GooglePlacesService {
 
     public String getPhotoUrl(String photoReference) {
         return String.format(
-            "https://places.googleapis.com/v1/%s/media?maxHeightPx=4000&maxWidthPx=2800&key=",
+            "https://places.googleapis.com/v1/%s/media?maxHeightPx=1366&maxWidthPx=768&key=",
             photoReference
         );
     }
 
     public JsonNode getDetailedPlaceData(String placeId) {
         String url = String.format(
-            "https://places.googleapis.com/v1/places/%s?fields=photos,rating,currentOpeningHours,formattedAddress,editorialSummary,location&key=%s",
+            "https://places.googleapis.com/v1/places/%s?fields=photos,rating,userRatingCount,currentOpeningHours,formattedAddress,editorialSummary,location&key=%s",
             placeId, apiKey
         );
         

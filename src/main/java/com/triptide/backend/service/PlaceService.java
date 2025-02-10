@@ -1,6 +1,8 @@
 package com.triptide.backend.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,24 +37,36 @@ public class PlaceService {
     private final LodgingRepository lodgingRepository;
     private final GooglePlacesService googlePlacesService;
 
-    public List<PlaceBasicDTO> getPlacesByType(String type, int limit) {
+    public List<PlaceBasicDTO> getPlacesByType(String type, int limit, Set<String> tags) {
         List<? extends BasePlace> places;
         
         switch (type.toLowerCase()) {
             case "tourist_attraction":
-                long touristAttractionCount = touristAttractionRepository.count();
-                int randomPageTA = (int) (Math.random() * (touristAttractionCount / limit));
-                places = touristAttractionRepository.findAll(PageRequest.of(randomPageTA, limit)).getContent();
+                if (tags != null && !tags.isEmpty()) {
+                    places = touristAttractionRepository.findByTagsNameIn(tags, tags.size(), PageRequest.of(0, limit)).getContent();
+                } else {
+                    long touristAttractionCount = touristAttractionRepository.count();
+                    int randomPageTA = (int) (Math.random() * (touristAttractionCount / limit));
+                    places = touristAttractionRepository.findAll(PageRequest.of(randomPageTA, limit)).getContent();
+                }
                 break;
             case "restaurant":
-                long restaurantCount = restaurantRepository.count();
-                int randomPageR = (int) (Math.random() * (restaurantCount / limit));
-                places = restaurantRepository.findAll(PageRequest.of(randomPageR, limit)).getContent();
+                if (tags != null && !tags.isEmpty()) {
+                    places = restaurantRepository.findByTagsNameIn(tags, tags.size(), PageRequest.of(0, limit)).getContent();
+                } else {
+                    long restaurantCount = restaurantRepository.count();
+                    int randomPageR = (int) (Math.random() * (restaurantCount / limit));
+                    places = restaurantRepository.findAll(PageRequest.of(randomPageR, limit)).getContent();
+                }
                 break;
             case "lodging":
-                long lodgingCount = lodgingRepository.count();
-                int randomPageL = (int) (Math.random() * (lodgingCount / limit));
-                places = lodgingRepository.findAll(PageRequest.of(randomPageL, limit)).getContent();
+                if (tags != null && !tags.isEmpty()) {
+                    places = lodgingRepository.findByTagsNameIn(tags, tags.size(), PageRequest.of(0, limit)).getContent();
+                } else {
+                    long lodgingCount = lodgingRepository.count();
+                    int randomPageL = (int) (Math.random() * (lodgingCount / limit));
+                    places = lodgingRepository.findAll(PageRequest.of(randomPageL, limit)).getContent();
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Invalid place type: " + type);
@@ -80,9 +94,7 @@ public class PlaceService {
             .toArray(String[]::new);
     }
 
-    private PlaceBasicDTO convertToBasicDTO(BasePlace place) {
-        JsonNode placeDetails = googlePlacesService.getBasicPlaceDetails(place.getPlaceId());
-        
+    private PlaceBasicDTO convertToBasicDTO(BasePlace place, JsonNode placeDetails) {
         String photoUrl = null;
         if (placeDetails.has("photos") && placeDetails.get("photos").size() > 0) {
             String photoReference = placeDetails.get("photos").get(0).get("name").asText();
@@ -91,14 +103,34 @@ public class PlaceService {
 
         Double rating = placeDetails.has("rating") ? placeDetails.get("rating").asDouble() : null;
         String[] tagNames = convertTagsToArray(getTagsFromPlace(place));
+        String type = formatPlaceType(place);
+        String ratingCount = placeDetails.has("userRatingCount") ? placeDetails.get("userRatingCount").asText() : null;
 
         return PlaceBasicDTO.builder()
             .placeId(place.getPlaceId())
             .name(place.getName())
+            .type(type)
             .tags(tagNames)
             .photoUrl(photoUrl)
             .rating(rating)
+            .ratingCount(ratingCount)
             .build();
+    }
+
+    private PlaceBasicDTO convertToBasicDTO(BasePlace place) {
+        JsonNode placeDetails = googlePlacesService.getBasicPlaceDetails(place.getPlaceId());
+        return convertToBasicDTO(place, placeDetails);
+    }
+
+    private String formatPlaceType(BasePlace place) {
+        if (place instanceof TouristAttraction) {
+            return "tourist_attraction";
+        } else if (place instanceof Restaurant) {
+            return "restaurant";
+        } else if (place instanceof Lodging) {
+            return "lodging";
+        }
+        return "unknown";
     }
 
     public PlaceDetailedDTO getPlaceDetails(String placeId) {
@@ -110,9 +142,8 @@ public class PlaceService {
                     .map(p -> (BasePlace) p)
                     .orElseThrow(() -> new RuntimeException("Place not found: " + placeId))));
 
-        // Get detailed data from Google API
+        // Get detailed data from Google API - single API call
         JsonNode placeDetails = googlePlacesService.getDetailedPlaceData(placeId);
-        String[] tagNames = convertTagsToArray(getTagsFromPlace(place));
 
         // Extract photo URLs
         List<String> photoUrls = new ArrayList<>();
@@ -143,13 +174,20 @@ public class PlaceService {
                 .build();
         }
 
+        String[] tagNames = convertTagsToArray(getTagsFromPlace(place));
+        Double rating = placeDetails.has("rating") ? placeDetails.get("rating").asDouble() : null;
+        String ratingCount = placeDetails.has("userRatingCount") ? 
+            placeDetails.get("userRatingCount").asText() : null;
+
         // Build and return the DTO
         return PlaceDetailedDTO.builder()
             .id(place.getPlaceId())
             .name(place.getName())
+            .type(formatPlaceType(place))
             .tags(tagNames)
+            .rating(rating)
+            .ratingCount(ratingCount)
             .address(placeDetails.get("formattedAddress").asText())
-            .rating(placeDetails.has("rating") ? placeDetails.get("rating").asDouble() : null)
             .openingHours(openingHours)
             .description(placeDetails.has("editorialSummary") ? 
                 placeDetails.get("editorialSummary").get("text").asText() : null)
@@ -172,25 +210,83 @@ public class PlaceService {
             .build();
     }
 
-    public List<PlaceBasicDTO> searchPlacesByName(String name, int page) {
-        // Get paginated results from tourist attractions
+    public List<PlaceBasicDTO> searchPlacesByName(String name, int page, Set<String> tags) {
         PageRequest pageRequest = PageRequest.of(page, 10); // limit of 10 items per page
         List<BasePlace> matchingPlaces = new ArrayList<>();
 
-        matchingPlaces.addAll(
-            touristAttractionRepository.findByNameContainingIgnoreCase(name, pageRequest).getContent()
-        );
-        matchingPlaces.addAll(
-            restaurantRepository.findByNameContainingIgnoreCase(name, pageRequest).getContent()
-        );
+        if (tags != null && !tags.isEmpty()) {
+            // Search with both name and tags
+            matchingPlaces.addAll(
+                touristAttractionRepository.findByNameContainingIgnoreCaseAndTagsNameIn(name, tags, pageRequest).getContent()
+            );
+            matchingPlaces.addAll(
+                restaurantRepository.findByNameContainingIgnoreCaseAndTagsNameIn(name, tags, pageRequest).getContent()
+            );
+            matchingPlaces.addAll(
+                lodgingRepository.findByNameContainingIgnoreCaseAndTagsNameIn(name, tags, pageRequest).getContent()
+            );
+        } else {
+            // Search by name only
+            matchingPlaces.addAll(
+                touristAttractionRepository.findByNameContainingIgnoreCase(name, pageRequest).getContent()
+            );
+            matchingPlaces.addAll(
+                restaurantRepository.findByNameContainingIgnoreCase(name, pageRequest).getContent()
+            );
+            matchingPlaces.addAll(
+                lodgingRepository.findByNameContainingIgnoreCase(name, pageRequest).getContent()
+            );
+        }
 
-        matchingPlaces.addAll(
-            lodgingRepository.findByNameContainingIgnoreCase(name, pageRequest).getContent()
-        );
-
-        // Convert all matching places to DTOs
         return matchingPlaces.stream()
             .map(this::convertToBasicDTO)
             .collect(Collectors.toList());
+    }
+
+    public Set<String> getAllUniqueTags() {
+        Set<String> allTags = new HashSet<>();
+        
+        // Collect tags from all types of places
+        touristAttractionRepository.findAll().stream()
+            .map(this::getTagsFromPlace)
+            .forEach(tags -> tags.forEach(tag -> allTags.add(tag.getName())));
+            
+        restaurantRepository.findAll().stream()
+            .map(this::getTagsFromPlace)
+            .forEach(tags -> tags.forEach(tag -> allTags.add(tag.getName())));
+            
+        lodgingRepository.findAll().stream()
+            .map(this::getTagsFromPlace)
+            .forEach(tags -> tags.forEach(tag -> allTags.add(tag.getName())));
+            
+        return allTags;
+    }
+
+    public Set<String> getAllUniqueTagsByType(String type) {
+        Set<String> allTags = new HashSet<>();
+        switch (type.toLowerCase()) {
+            case "tourist_attraction":
+                allTags = touristAttractionRepository.findAll().stream()
+                    .map(this::getTagsFromPlace)
+                    .flatMap(Collection::stream)
+                    .map(Tag::getName)
+                    .collect(Collectors.toSet());
+                break;
+            case "restaurant":
+                allTags = restaurantRepository.findAll().stream()
+                    .map(this::getTagsFromPlace)
+                    .flatMap(Collection::stream)
+                    .map(Tag::getName)
+                    .collect(Collectors.toSet());
+                break;
+            case "lodging":
+                allTags = lodgingRepository.findAll().stream()
+                    .map(this::getTagsFromPlace)
+                    .flatMap(Collection::stream)
+                    .map(Tag::getName)
+                    .collect(Collectors.toSet());
+                break;
+        }
+        return allTags;
     }
 } 
