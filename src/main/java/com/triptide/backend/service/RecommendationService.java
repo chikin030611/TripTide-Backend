@@ -1,6 +1,7 @@
 package com.triptide.backend.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -32,8 +33,7 @@ public class RecommendationService {
     private final UserPreferenceService userPreferenceService;
     private final GooglePlacesService googlePlacesService;
     private static final int MAX_TAGS_FOR_RECOMMENDATIONS = 3;
-    private static final int MAX_TOTAL_RECOMMENDATIONS = 9;
-    private static final int MAX_PLACES_PER_TYPE = 3; // To ensure balanced distribution
+    private static final int MAX_TOTAL_RECOMMENDATIONS = 6;
 
     public List<PlaceBasicDTO> getRecommendedPlaces(String userEmail) {
         // Get user preferences
@@ -44,31 +44,33 @@ public class RecommendationService {
         Set<String> selectedTags = selectRandomTags(preferredTags);
 
         // Get recommendations from each repository using selected tags
-        List<PlaceBasicDTO> lodgings = getLodgingRecommendations(selectedTags).stream()
-            .limit(MAX_PLACES_PER_TYPE)
-            .collect(Collectors.toList());
-            
-        List<PlaceBasicDTO> restaurants = getRestaurantRecommendations(selectedTags).stream()
-            .limit(MAX_PLACES_PER_TYPE)
-            .collect(Collectors.toList());
-            
-        List<PlaceBasicDTO> attractions = getTouristAttractionRecommendations(selectedTags).stream()
-            .limit(MAX_PLACES_PER_TYPE)
-            .collect(Collectors.toList());
+        List<PlaceBasicDTO> lodgings = getLodgingRecommendations(selectedTags);
+        List<PlaceBasicDTO> restaurants = getRestaurantRecommendations(selectedTags);
+        List<PlaceBasicDTO> attractions = getTouristAttractionRecommendations(selectedTags);
 
-        // Combine and shuffle all recommendations
+        // Combine all recommendations
         List<PlaceBasicDTO> allRecommendations = new ArrayList<>();
         allRecommendations.addAll(lodgings);
         allRecommendations.addAll(restaurants);
         allRecommendations.addAll(attractions);
 
-        // Shuffle to randomize the order
-        Collections.shuffle(allRecommendations);
+        // Sort by number of matching tags (descending)
+        Collections.sort(allRecommendations, (a, b) -> {
+            long aMatchCount = countMatchingTags(a.getTags(), selectedTags);
+            long bMatchCount = countMatchingTags(b.getTags(), selectedTags);
+            return Long.compare(bMatchCount, aMatchCount);
+        });
 
-        // Return only up to MAX_TOTAL_RECOMMENDATIONS
+        // Return top recommendations
         return allRecommendations.stream()
             .limit(MAX_TOTAL_RECOMMENDATIONS)
             .collect(Collectors.toList());
+    }
+
+    private long countMatchingTags(String[] placeTags, Set<String> selectedTags) {
+        return Arrays.stream(placeTags)
+            .filter(selectedTags::contains)
+            .count();
     }
 
     private Set<String> selectRandomTags(Set<String> allTags) {
@@ -90,13 +92,6 @@ public class RecommendationService {
 
     private List<PlaceBasicDTO> getLodgingRecommendations(Set<String> preferredTags) {
         List<Lodging> lodgings = lodgingRepository.findByTags(preferredTags);
-        // If we don't have enough recommendations with the preferred tags,
-        // get additional random lodgings
-        if (lodgings.size() < MAX_PLACES_PER_TYPE) {
-            int remaining = MAX_PLACES_PER_TYPE - lodgings.size();
-            List<Lodging> additionalLodgings = lodgingRepository.findRandomLodgings(remaining);
-            lodgings.addAll(additionalLodgings);
-        }
         return lodgings.stream()
             .map(this::convertLodgingToDTO)
             .collect(Collectors.toList());
@@ -104,13 +99,6 @@ public class RecommendationService {
 
     private List<PlaceBasicDTO> getRestaurantRecommendations(Set<String> preferredTags) {
         List<Restaurant> restaurants = restaurantRepository.findByTags(preferredTags);
-        // If we don't have enough recommendations with the preferred tags,
-        // get additional random restaurants
-        if (restaurants.size() < MAX_PLACES_PER_TYPE) {
-            int remaining = MAX_PLACES_PER_TYPE - restaurants.size();
-            List<Restaurant> additionalRestaurants = restaurantRepository.findRandomRestaurants(remaining);
-            restaurants.addAll(additionalRestaurants);
-        }
         return restaurants.stream()
             .map(this::convertRestaurantToDTO)
             .collect(Collectors.toList());
@@ -118,13 +106,6 @@ public class RecommendationService {
 
     private List<PlaceBasicDTO> getTouristAttractionRecommendations(Set<String> preferredTags) {
         List<TouristAttraction> attractions = touristAttractionRepository.findByTags(preferredTags);
-        // If we don't have enough recommendations with the preferred tags,
-        // get additional random attractions
-        if (attractions.size() < MAX_PLACES_PER_TYPE) {
-            int remaining = MAX_PLACES_PER_TYPE - attractions.size();
-            List<TouristAttraction> additionalAttractions = touristAttractionRepository.findRandomAttractions(remaining);
-            attractions.addAll(additionalAttractions);
-        }
         return attractions.stream()
             .map(this::convertAttractionToDTO)
             .collect(Collectors.toList());
