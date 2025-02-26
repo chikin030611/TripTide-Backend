@@ -103,4 +103,8 @@ public class JwtService {
         }
         return generateToken(new HashMap<>(), userDetailsService.loadUserByUsername(username));
     }
+
+    public String extractUserId(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
 } 

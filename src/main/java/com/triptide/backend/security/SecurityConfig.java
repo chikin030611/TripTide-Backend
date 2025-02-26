@@ -62,6 +62,7 @@ public class SecurityConfig {
                     "/error",
                     "/actuator/health"
                 ).permitAll()
+                .requestMatchers("/api/preferences", "/api/preferences/**").authenticated()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
