@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.triptide.backend.dto.AddPlaceToTripRequest;
 import com.triptide.backend.dto.CreateTripRequest;
+import com.triptide.backend.dto.UpdateTripRequest;
 import com.triptide.backend.model.Trip;
 import com.triptide.backend.service.TripService;
 
@@ -78,5 +80,14 @@ public class TripController {
         Trip updatedTrip = tripService.removePlaceFromTrip(tripId, placeId, userEmail);
         return ResponseEntity.ok(updatedTrip);
     }
-    
+
+    @PutMapping("/{tripId}")
+    public ResponseEntity<Trip> updateTrip(
+            @PathVariable String tripId,
+            @RequestBody UpdateTripRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+        Trip updatedTrip = tripService.updateTrip(tripId, request, userEmail);
+        return ResponseEntity.ok(updatedTrip);
+    }
 } 

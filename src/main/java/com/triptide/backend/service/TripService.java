@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.triptide.backend.dto.AddPlaceToTripRequest;
 import com.triptide.backend.dto.CreateTripRequest;
+import com.triptide.backend.dto.UpdateTripRequest;
 import com.triptide.backend.model.AppUser;
 import com.triptide.backend.model.Trip;
 import com.triptide.backend.repository.AppUserRepository;
@@ -127,5 +128,27 @@ public class TripService {
 
         return tripRepository.save(trip);
     }
-    
+
+    @Transactional
+    public Trip updateTrip(String tripId, UpdateTripRequest request, String userEmail) {
+        Trip trip = getTripById(tripId, userEmail); // This will handle auth check
+        
+        if (request.getName() != null) {
+            trip.setName(request.getName());
+        }
+        if (request.getDescription() != null) {
+            trip.setDescription(request.getDescription());
+        }
+        if (request.getStartDate() != null) {
+            trip.setStartDate(request.getStartDate());
+        }
+        if (request.getEndDate() != null) {
+            trip.setEndDate(request.getEndDate());
+        }
+        if (request.getImage() != null) {
+            trip.setImage(request.getImage());
+        }
+        
+        return tripRepository.save(trip);
+    }
 } 
