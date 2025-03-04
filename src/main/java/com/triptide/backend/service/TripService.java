@@ -38,6 +38,10 @@ public class TripService {
         trip.setImage(request.getImage());
         trip.setUser(user);
         
+        trip.setTouristAttractionIds(new ArrayList<>());
+        trip.setRestaurantIds(new ArrayList<>());
+        trip.setLodgingIds(new ArrayList<>());
+        
         return tripRepository.save(trip);
     }
 

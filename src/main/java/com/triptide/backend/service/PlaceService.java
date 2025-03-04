@@ -133,6 +133,18 @@ public class PlaceService {
         return "unknown";
     }
 
+    public PlaceBasicDTO getPlaceBasicDetails(String placeId) {
+        BasePlace place = touristAttractionRepository.findByPlaceId(placeId)
+            .map(p -> (BasePlace) p)
+            .orElseGet(() -> restaurantRepository.findByPlaceId(placeId)
+                .map(p -> (BasePlace) p)
+                .orElseGet(() -> lodgingRepository.findByPlaceId(placeId)
+                    .map(p -> (BasePlace) p)
+                    .orElseThrow(() -> new RuntimeException("Place not found: " + placeId))));
+
+        return convertToBasicDTO(place);
+    }
+
     public PlaceDetailedDTO getPlaceDetails(String placeId) {
         BasePlace place = touristAttractionRepository.findByPlaceId(placeId)
             .map(p -> (BasePlace) p)

@@ -44,6 +44,11 @@ public class PlaceController {
         return placeService.getPlaceDetails(placeId);
     }
 
+    @GetMapping("/{placeId}/basic")
+    public PlaceBasicDTO getPlaceBasicDetails(@PathVariable String placeId) {
+        return placeService.getPlaceBasicDetails(placeId);
+    }
+
     @GetMapping("/search")
     public ResponseEntity<List<PlaceBasicDTO>> searchPlaces(
             @RequestParam String name,
