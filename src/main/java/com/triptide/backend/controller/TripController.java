@@ -90,4 +90,14 @@ public class TripController {
         Trip updatedTrip = tripService.updateTrip(tripId, request, userEmail);
         return ResponseEntity.ok(updatedTrip);
     }
+
+    @GetMapping("/{tripId}/places/{placeId}/check")
+    public ResponseEntity<Boolean> checkPlaceInTrip(
+            @PathVariable String tripId,
+            @PathVariable String placeId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+        boolean isInTrip = tripService.isPlaceInTrip(tripId, placeId, userEmail);
+        return ResponseEntity.ok(isInTrip);
+    }
 } 

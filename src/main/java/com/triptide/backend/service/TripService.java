@@ -155,4 +155,13 @@ public class TripService {
         
         return tripRepository.save(trip);
     }
+
+    @Transactional(readOnly = true)
+    public boolean isPlaceInTrip(String tripId, String placeId, String userEmail) {
+        Trip trip = getTripById(tripId, userEmail); // This will handle auth check
+        
+        return (trip.getTouristAttractionIds() != null && trip.getTouristAttractionIds().contains(placeId)) ||
+               (trip.getRestaurantIds() != null && trip.getRestaurantIds().contains(placeId)) ||
+               (trip.getLodgingIds() != null && trip.getLodgingIds().contains(placeId));
+    }
 } 
