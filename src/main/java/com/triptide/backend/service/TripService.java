@@ -80,32 +80,43 @@ public class TripService {
     public Trip addPlaceToTrip(String tripId, AddPlaceToTripRequest request, String userEmail) {
         Trip trip = getTripById(tripId, userEmail); // This will handle auth check
 
-        switch (request.getPlaceType().toLowerCase()) {
+        if (isPlaceInTrip(tripId, request.getPlaceId(), userEmail)) {
+            System.out.println("Place already in trip");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Place already in trip");
+        }
+
+        String placeType = request.getPlaceType().toLowerCase();
+        boolean placeAdded = false;
+
+        // Add to appropriate list based on place type
+        switch (placeType) {
             case "tourist_attraction" -> {
                 if (trip.getTouristAttractionIds() == null) {
                     trip.setTouristAttractionIds(new ArrayList<>());
                 }
-                trip.getTouristAttractionIds().add(request.getPlaceId());
+                placeAdded = trip.getTouristAttractionIds().add(request.getPlaceId());
+                System.out.println("Place added to tourist attraction list");
             }
-
             case "restaurant" -> {
                 if (trip.getRestaurantIds() == null) {
                     trip.setRestaurantIds(new ArrayList<>());
                 }
-                trip.getRestaurantIds().add(request.getPlaceId());
+                placeAdded = trip.getRestaurantIds().add(request.getPlaceId());
             }
-
             case "lodging" -> {
                 if (trip.getLodgingIds() == null) {
                     trip.setLodgingIds(new ArrayList<>());
                 }
-                trip.getLodgingIds().add(request.getPlaceId());
+                placeAdded = trip.getLodgingIds().add(request.getPlaceId());
             }
-
             default -> throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, 
+                    HttpStatus.BAD_REQUEST,
                     "Invalid place type. Must be tourist attraction, restaurant, or lodging"
-                );
+            );
+        }
+
+        if (!placeAdded) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to add place to trip");
         }
 
         return tripRepository.save(trip);
@@ -116,14 +127,13 @@ public class TripService {
         Trip trip = getTripById(tripId, userEmail);
         boolean placeRemoved = false;
 
-        if (trip.getTouristAttractionIds() != null) {
-            placeRemoved |= trip.getTouristAttractionIds().remove(placeId);
-        }
-        if (trip.getRestaurantIds() != null) {
-            placeRemoved |= trip.getRestaurantIds().remove(placeId);
-        }
-        if (trip.getLodgingIds() != null) {
-            placeRemoved |= trip.getLodgingIds().remove(placeId);
+        // Try to remove from each list, tracking if removal was successful
+        if (trip.getTouristAttractionIds() != null && trip.getTouristAttractionIds().contains(placeId)) {
+            placeRemoved = trip.getTouristAttractionIds().remove(placeId);
+        } else if (trip.getRestaurantIds() != null && trip.getRestaurantIds().contains(placeId)) {
+            placeRemoved = trip.getRestaurantIds().remove(placeId);
+        } else if (trip.getLodgingIds() != null && trip.getLodgingIds().contains(placeId)) {
+            placeRemoved = trip.getLodgingIds().remove(placeId);
         }
 
         if (!placeRemoved) {
