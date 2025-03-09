@@ -95,7 +95,7 @@ public class PlaceService {
     }
 
     private PlaceBasicDTO convertToBasicDTO(BasePlace place, JsonNode placeDetails) {
-        String photoUrl = null;
+        String photoUrl = "";
         if (placeDetails.has("photos") && placeDetails.get("photos").size() > 0) {
             String photoReference = placeDetails.get("photos").get(0).get("name").asText();
             photoUrl = googlePlacesService.getPhotoUrl(photoReference);
