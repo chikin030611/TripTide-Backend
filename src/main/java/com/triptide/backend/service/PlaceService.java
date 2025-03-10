@@ -41,7 +41,7 @@ public class PlaceService {
         List<? extends BasePlace> places;
         
         switch (type.toLowerCase()) {
-            case "tourist_attraction":
+            case "tourist_attraction" -> {
                 if (tags != null && !tags.isEmpty()) {
                     places = touristAttractionRepository.findByTagsNameIn(tags, tags.size(), PageRequest.of(0, limit)).getContent();
                 } else {
@@ -49,8 +49,8 @@ public class PlaceService {
                     int randomPageTA = (int) (Math.random() * (touristAttractionCount / limit));
                     places = touristAttractionRepository.findAll(PageRequest.of(randomPageTA, limit)).getContent();
                 }
-                break;
-            case "restaurant":
+            }
+            case "restaurant" -> {
                 if (tags != null && !tags.isEmpty()) {
                     places = restaurantRepository.findByTagsNameIn(tags, tags.size(), PageRequest.of(0, limit)).getContent();
                 } else {
@@ -58,8 +58,8 @@ public class PlaceService {
                     int randomPageR = (int) (Math.random() * (restaurantCount / limit));
                     places = restaurantRepository.findAll(PageRequest.of(randomPageR, limit)).getContent();
                 }
-                break;
-            case "lodging":
+            }
+            case "lodging" -> {
                 if (tags != null && !tags.isEmpty()) {
                     places = lodgingRepository.findByTagsNameIn(tags, tags.size(), PageRequest.of(0, limit)).getContent();
                 } else {
@@ -67,9 +67,8 @@ public class PlaceService {
                     int randomPageL = (int) (Math.random() * (lodgingCount / limit));
                     places = lodgingRepository.findAll(PageRequest.of(randomPageL, limit)).getContent();
                 }
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid place type: " + type);
+            }
+            default -> throw new IllegalArgumentException("Invalid place type: " + type);
         }
 
         return places.stream()
@@ -78,12 +77,18 @@ public class PlaceService {
     }
 
     private Set<Tag> getTagsFromPlace(BasePlace place) {
-        if (place instanceof Restaurant) {
-            return ((Restaurant) place).getTags();
-        } else if (place instanceof TouristAttraction) {
-            return ((TouristAttraction) place).getTags();
-        } else if (place instanceof Lodging) {
-            return ((Lodging) place).getTags();
+        switch (place) {
+            case Restaurant restaurant -> {
+                return restaurant.getTags();
+            }
+            case TouristAttraction touristAttraction -> {
+                return touristAttraction.getTags();
+            }
+            case Lodging lodging -> {
+                return lodging.getTags();
+            }
+            default -> {
+            }
         }
         return Set.of();
     }
@@ -277,27 +282,21 @@ public class PlaceService {
     public Set<String> getAllUniqueTagsByType(String type) {
         Set<String> allTags = new HashSet<>();
         switch (type.toLowerCase()) {
-            case "tourist_attraction":
-                allTags = touristAttractionRepository.findAll().stream()
+            case "tourist_attraction" -> allTags = touristAttractionRepository.findAll().stream()
                     .map(this::getTagsFromPlace)
                     .flatMap(Collection::stream)
                     .map(Tag::getName)
                     .collect(Collectors.toSet());
-                break;
-            case "restaurant":
-                allTags = restaurantRepository.findAll().stream()
+            case "restaurant" -> allTags = restaurantRepository.findAll().stream()
                     .map(this::getTagsFromPlace)
                     .flatMap(Collection::stream)
                     .map(Tag::getName)
                     .collect(Collectors.toSet());
-                break;
-            case "lodging":
-                allTags = lodgingRepository.findAll().stream()
+            case "lodging" -> allTags = lodgingRepository.findAll().stream()
                     .map(this::getTagsFromPlace)
                     .flatMap(Collection::stream)
                     .map(Tag::getName)
                     .collect(Collectors.toSet());
-                break;
         }
         return allTags;
     }

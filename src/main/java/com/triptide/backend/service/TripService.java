@@ -70,7 +70,7 @@ public class TripService {
 
     @Transactional
     public void deleteTrip(String tripId, String userEmail) {
-        AppUser user = appUserRepository.findByEmail(userEmail)
+        appUserRepository.findByEmail(userEmail)
             .orElseThrow(() -> new RuntimeException("User not found"));
 
         tripRepository.deleteById(tripId);
