@@ -1,6 +1,8 @@
 package com.triptide.backend.model;
 
-import java.util.Date;
+import java.sql.Time;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,8 +12,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,16 +30,15 @@ public class ScheduledPlace {
     private String placeId;
 
     @Column(name = "start_time", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date startTime;
+    private Time startTime;
 
     @Column(name = "end_time", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date endTime;
+    private Time endTime;
 
     private String notes;
 
     @ManyToOne
     @JoinColumn(name = "daily_itinerary_id", nullable = false)
+    @JsonBackReference
     private DailyItinerary dailyItinerary;
 } 

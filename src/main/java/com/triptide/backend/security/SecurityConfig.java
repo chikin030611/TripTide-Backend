@@ -60,7 +60,9 @@ public class SecurityConfig {
                     "/api/auth/**",
                     "/api/places/**",
                     "/error",
-                    "/actuator/health"
+                    "/actuator/health",
+                    "/test/**",
+                    "/itinerary-test.html"
                 ).permitAll()
                 .requestMatchers("/api/preferences", "/api/preferences/**").authenticated()
                 .anyRequest().authenticated()
