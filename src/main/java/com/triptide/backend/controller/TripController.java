@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.triptide.backend.dto.AddPlaceToTripRequest;
 import com.triptide.backend.dto.CreateTripRequest;
+import com.triptide.backend.dto.TripResponseDto;
 import com.triptide.backend.dto.UpdateTripRequest;
 import com.triptide.backend.model.Trip;
 import com.triptide.backend.service.TripService;
@@ -46,11 +47,11 @@ public class TripController {
     }
 
     @GetMapping("/{tripId}")
-    public ResponseEntity<Trip> getTripById(@PathVariable String tripId) {
+    public ResponseEntity<TripResponseDto> getTripById(@PathVariable String tripId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
         Trip trip = tripService.getTripById(tripId, userEmail);
-        return ResponseEntity.ok(trip);
+        return ResponseEntity.ok(convertToResponseDto(trip));
     }
 
     @DeleteMapping("/{tripId}")
@@ -99,5 +100,20 @@ public class TripController {
         String userEmail = authentication.getName();
         boolean isInTrip = tripService.isPlaceInTrip(tripId, placeId, userEmail);
         return ResponseEntity.ok(isInTrip);
+    }
+
+    private TripResponseDto convertToResponseDto(Trip trip) {
+        TripResponseDto dto = new TripResponseDto();
+        dto.setId(trip.getId());
+        dto.setName(trip.getName());
+        dto.setDescription(trip.getDescription());
+        dto.setStartDate(trip.getStartDate());
+        dto.setEndDate(trip.getEndDate());
+        dto.setTouristAttractionIds(trip.getTouristAttractionIds());
+        dto.setRestaurantIds(trip.getRestaurantIds());
+        dto.setLodgingIds(trip.getLodgingIds());
+        dto.setImage(trip.getImage());
+        dto.setDailyItineraries(trip.getDailyItineraries());
+        return dto;
     }
 } 
