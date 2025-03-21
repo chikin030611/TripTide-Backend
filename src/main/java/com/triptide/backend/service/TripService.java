@@ -49,7 +49,21 @@ public class TripService {
     public List<Trip> getUserTrips(String userEmail) {
         AppUser user = appUserRepository.findByEmail(userEmail)
             .orElseThrow(() -> new RuntimeException("User not found"));
-        return tripRepository.findByUser(user);
+        List<Trip> trips = tripRepository.findByUser(user);
+        
+        // Sort scheduledPlaces by startTime in each dailyItinerary
+        for (Trip trip : trips) {
+            if (trip.getDailyItineraries() != null) {
+                for (com.triptide.backend.model.DailyItinerary itinerary : trip.getDailyItineraries()) {
+                    if (itinerary.getScheduledPlaces() != null) {
+                        itinerary.getScheduledPlaces().sort(java.util.Comparator.comparing(
+                            com.triptide.backend.model.ScheduledPlace::getStartTime));
+                    }
+                }
+            }
+        }
+        
+        return trips;
     }
 
     @Transactional(readOnly = true)
@@ -63,6 +77,16 @@ public class TripService {
         // Check if the trip belongs to the requesting user
         if (!trip.getUser().getId().equals(user.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+        }
+
+        // Sort scheduledPlaces by startTime in each dailyItinerary
+        if (trip.getDailyItineraries() != null) {
+            for (com.triptide.backend.model.DailyItinerary itinerary : trip.getDailyItineraries()) {
+                if (itinerary.getScheduledPlaces() != null) {
+                    itinerary.getScheduledPlaces().sort(java.util.Comparator.comparing(
+                        com.triptide.backend.model.ScheduledPlace::getStartTime));
+                }
+            }
         }
 
         return trip;

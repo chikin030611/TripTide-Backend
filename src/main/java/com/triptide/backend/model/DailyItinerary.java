@@ -31,6 +31,9 @@ public class DailyItinerary {
     @Column(nullable = false)
     private Integer day;
 
+    @Column(nullable = false)
+    private java.util.Date date;
+
     @ManyToOne
     @JoinColumn(name = "trip_id", nullable = false)
     @JsonBackReference

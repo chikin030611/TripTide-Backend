@@ -37,6 +37,9 @@ public class ScheduledPlace {
 
     private String notes;
 
+    @Column(name = "date", nullable = false)
+    private java.util.Date date;
+
     @ManyToOne
     @JoinColumn(name = "daily_itinerary_id", nullable = false)
     @JsonBackReference

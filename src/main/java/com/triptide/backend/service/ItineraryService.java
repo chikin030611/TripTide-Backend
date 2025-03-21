@@ -70,6 +70,11 @@ public class ItineraryService {
         dailyItinerary.setTrip(trip);
         dailyItinerary.setScheduledPlaces(new ArrayList<>());
         
+        // Calculate and set the date based on trip start date and day number
+        long dayInMillis = (request.getDay() - 1) * 24 * 60 * 60 * 1000L;
+        java.util.Date itineraryDate = new java.util.Date(trip.getStartDate().getTime() + dayInMillis);
+        dailyItinerary.setDate(itineraryDate);
+        
         // Save the daily itinerary
         DailyItinerary savedItinerary = dailyItineraryRepository.save(dailyItinerary);
         
@@ -83,13 +88,23 @@ public class ItineraryService {
                 scheduledPlace.setNotes(placeDto.getNotes());
                 scheduledPlace.setDailyItinerary(savedItinerary);
                 
+                // Set the date from the daily itinerary
+                scheduledPlace.setDate(savedItinerary.getDate());
+                
                 scheduledPlaceRepository.save(scheduledPlace);
             }
         }
         
         // Refresh the itinerary to include the scheduled places
-        return dailyItineraryRepository.findById(savedItinerary.getId())
+        DailyItinerary refreshedItinerary = dailyItineraryRepository.findById(savedItinerary.getId())
                 .orElseThrow(() -> new RuntimeException("Failed to retrieve saved itinerary"));
+        
+        // Sort scheduled places by start time
+        if (refreshedItinerary.getScheduledPlaces() != null) {
+            refreshedItinerary.getScheduledPlaces().sort(Comparator.comparing(ScheduledPlace::getStartTime));
+        }
+        
+        return refreshedItinerary;
     }
     
     @Transactional(readOnly = true)
@@ -98,7 +113,16 @@ public class ItineraryService {
         Trip trip = getTripByIdAndUserEmail(tripId, userEmail);
         
         // Return all daily itineraries for the trip
-        return dailyItineraryRepository.findByTripId(tripId);
+        List<DailyItinerary> itineraries = dailyItineraryRepository.findByTripId(tripId);
+        
+        // Sort scheduled places in each itinerary by start time
+        for (DailyItinerary itinerary : itineraries) {
+            if (itinerary.getScheduledPlaces() != null) {
+                itinerary.getScheduledPlaces().sort(Comparator.comparing(ScheduledPlace::getStartTime));
+            }
+        }
+        
+        return itineraries;
     }
     
     @Transactional
@@ -142,13 +166,23 @@ public class ItineraryService {
                 scheduledPlace.setNotes(placeDto.getNotes());
                 scheduledPlace.setDailyItinerary(dailyItinerary);
                 
+                // Set the date from the daily itinerary
+                scheduledPlace.setDate(dailyItinerary.getDate());
+                
                 scheduledPlaceRepository.save(scheduledPlace);
             }
         }
         
         // Refresh the itinerary to include the updated scheduled places
-        return dailyItineraryRepository.findById(dailyItinerary.getId())
+        DailyItinerary refreshedItinerary = dailyItineraryRepository.findById(dailyItinerary.getId())
                 .orElseThrow(() -> new RuntimeException("Failed to retrieve updated itinerary"));
+        
+        // Sort scheduled places by start time
+        if (refreshedItinerary.getScheduledPlaces() != null) {
+            refreshedItinerary.getScheduledPlaces().sort(Comparator.comparing(ScheduledPlace::getStartTime));
+        }
+        
+        return refreshedItinerary;
     }
     
     @Transactional
