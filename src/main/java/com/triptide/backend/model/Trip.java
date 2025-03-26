@@ -3,6 +3,8 @@ package com.triptide.backend.model;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -65,6 +67,7 @@ public class Trip {
     private String image;
 
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<DailyItinerary> dailyItineraries;
 
     @ManyToOne

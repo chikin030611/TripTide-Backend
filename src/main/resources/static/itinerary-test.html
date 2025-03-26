@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Itinerary API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .card {
+            flex: 1 1 45%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #555;
+            margin-top: 0;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, textarea, button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+        .scheduled-place {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .add-place-btn {
+            background-color: #2196F3;
+            margin-top: 10px;
+        }
+        .remove-place-btn {
+            background-color: #f44336;
+            margin-top: 5px;
+        }
+        .small-btn {
+            width: auto;
+            padding: 4px 8px;
+            margin-left: 5px;
+            font-size: 12px;
+        }
+        .error {
+            color: #f44336;
+            font-weight: bold;
+        }
+        .info-box {
+            background-color: #e3f2fd;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Itinerary API Test</h1>
+    
+    <div class="container">
+        <!-- Authentication Section -->
+        <div class="card">
+            <h2>Authentication</h2>
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="Enter your email">
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter your password">
+            
+            <button id="login-btn">Login</button>
+            
+            <pre id="auth-result"></pre>
+        </div>
+        
+        <!-- Trip Details Section -->
+        <div class="card">
+            <h2>Get Trip Details</h2>
+            <label for="trip-details-id">Trip ID:</label>
+            <input type="text" id="trip-details-id" placeholder="Enter trip ID">
+            
+            <button id="get-trip-btn">Get Trip</button>
+            
+            <pre id="trip-details-result"></pre>
+        </div>
+        
+        <!-- Create Itinerary Section -->
+        <div class="card">
+            <h2>Create Itinerary</h2>
+            <div class="info-box">
+                <strong>New Validations:</strong>
+                <ul>
+                    <li>Start time must be before end time</li>
+                    <li>Times cannot overlap between places</li>
+                </ul>
+            </div>
+            <label for="create-trip-id">Trip ID:</label>
+            <input type="text" id="create-trip-id" placeholder="Enter trip ID">
+            
+            <label for="create-day">Day:</label>
+            <input type="number" id="create-day" placeholder="Enter day number">
+            
+            <div id="create-places-container">
+                <!-- Scheduled places will be added here -->
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button class="add-place-btn" id="create-add-place-btn">Add Place</button>
+                <button class="add-place-btn" id="create-add-test-places-btn" style="background-color: #FF9800;">Add Test Places</button>
+            </div>
+            <button id="create-itinerary-btn">Create Itinerary</button>
+            
+            <pre id="create-result"></pre>
+        </div>
+        
+        <!-- Get Itineraries Section -->
+        <div class="card">
+            <h2>Get Trip Itineraries</h2>
+            <label for="get-trip-id">Trip ID:</label>
+            <input type="text" id="get-trip-id" placeholder="Enter trip ID">
+            
+            <button id="get-itineraries-btn">Get Itineraries</button>
+            
+            <pre id="get-result"></pre>
+        </div>
+        
+        <!-- Update Itinerary Section -->
+        <div class="card">
+            <h2>Update Itinerary</h2>
+            <div class="info-box">
+                <strong>New Validations:</strong>
+                <ul>
+                    <li>Start time must be before end time</li>
+                    <li>Times cannot overlap between places</li>
+                </ul>
+            </div>
+            <label for="update-trip-id">Trip ID:</label>
+            <input type="text" id="update-trip-id" placeholder="Enter trip ID">
+            
+            <label for="update-day">Day:</label>
+            <input type="number" id="update-day" placeholder="Enter day number">
+            
+            <div id="update-places-container">
+                <!-- Scheduled places will be added here -->
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button class="add-place-btn" id="update-add-place-btn">Add Place</button>
+                <button class="add-place-btn" id="update-add-test-places-btn" style="background-color: #FF9800;">Add Test Places</button>
+                <button class="add-place-btn" id="update-add-invalid-places-btn" style="background-color: #F44336;">Add Invalid Places</button>
+            </div>
+            <button id="update-itinerary-btn">Update Itinerary</button>
+            
+            <pre id="update-result"></pre>
+        </div>
+        
+        <!-- Delete Itinerary Section -->
+        <div class="card">
+            <h2>Delete Itinerary</h2>
+            <label for="delete-trip-id">Trip ID:</label>
+            <input type="text" id="delete-trip-id" placeholder="Enter trip ID">
+            
+            <label for="delete-day">Day:</label>
+            <input type="number" id="delete-day" placeholder="Enter day number">
+            
+            <button id="delete-itinerary-btn">Delete Itinerary</button>
+            
+            <pre id="delete-result"></pre>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let authToken = '';
+        
+        // Authentication
+        document.getElementById('login-btn').addEventListener('click', async () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const authResult = document.getElementById('auth-result');
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    authToken = data.token;
+                    authResult.textContent = 'Login successful! Token: ' + authToken.substring(0, 20) + '...';
+                } else {
+                    authResult.textContent = 'Error: ' + data.message;
+                }
+            } catch (error) {
+                authResult.textContent = 'Error: ' + error.message;
+            }
+        });
+        
+        // Get Trip Details
+        document.getElementById('get-trip-btn').addEventListener('click', async () => {
+            if (!authToken) {
+                document.getElementById('trip-details-result').textContent = 'Please login first';
+                return;
+            }
+            
+            const tripId = document.getElementById('trip-details-id').value;
+            const tripDetailsResult = document.getElementById('trip-details-result');
+            
+            try {
+                const response = await fetch(`/api/trips/${tripId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    tripDetailsResult.textContent = JSON.stringify(data, null, 2);
+                    
+                    // Auto-populate trip IDs in other forms
+                    document.getElementById('create-trip-id').value = tripId;
+                    document.getElementById('get-trip-id').value = tripId;
+                    document.getElementById('update-trip-id').value = tripId;
+                    document.getElementById('delete-trip-id').value = tripId;
+                } else {
+                    tripDetailsResult.textContent = 'Error: ' + JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                tripDetailsResult.textContent = 'Error: ' + error.message;
+            }
+        });
+        
+        // Create scheduled place template
+        function createScheduledPlaceTemplate(containerId, index, placeData = null) {
+            const container = document.getElementById(containerId);
+            
+            const placeDiv = document.createElement('div');
+            placeDiv.className = 'scheduled-place';
+            placeDiv.dataset.index = index;
+            
+            placeDiv.innerHTML = `
+                <label for="${containerId}-place-id-${index}">Place ID:</label>
+                <input type="text" id="${containerId}-place-id-${index}" placeholder="Enter place ID" value="${placeData?.placeId || ''}">
+                
+                <label for="${containerId}-start-time-${index}">Start Time:</label>
+                <input type="time" id="${containerId}-start-time-${index}" value="${placeData?.startTime || ''}">
+                
+                <label for="${containerId}-end-time-${index}">End Time:</label>
+                <input type="time" id="${containerId}-end-time-${index}" value="${placeData?.endTime || ''}">
+                
+                <label for="${containerId}-notes-${index}">Notes:</label>
+                <textarea id="${containerId}-notes-${index}" placeholder="Enter notes">${placeData?.notes || ''}</textarea>
+                
+                <button class="remove-place-btn" onclick="removeScheduledPlace('${containerId}', ${index})">Remove Place</button>
+            `;
+            
+            container.appendChild(placeDiv);
+        }
+        
+        // Remove scheduled place
+        function removeScheduledPlace(containerId, index) {
+            const container = document.getElementById(containerId);
+            const placeDiv = container.querySelector(`.scheduled-place[data-index="${index}"]`);
+            
+            if (placeDiv) {
+                container.removeChild(placeDiv);
+            }
+        }
+        
+        // Get scheduled places from form
+        function getScheduledPlacesFromForm(containerId) {
+            const container = document.getElementById(containerId);
+            const placeDivs = container.querySelectorAll('.scheduled-place');
+            const scheduledPlaces = [];
+            
+            placeDivs.forEach(div => {
+                const index = div.dataset.index;
+                
+                const placeId = document.getElementById(`${containerId}-place-id-${index}`).value;
+                const startTimeStr = document.getElementById(`${containerId}-start-time-${index}`).value;
+                const endTimeStr = document.getElementById(`${containerId}-end-time-${index}`).value;
+                const notes = document.getElementById(`${containerId}-notes-${index}`).value;
+                
+                // Convert time string to LocalTime format (HH:mm:ss)
+                const startTime = startTimeStr ? startTimeStr + ':00' : null;
+                const endTime = endTimeStr ? endTimeStr + ':00' : null;
+                
+                if (placeId && startTime && endTime) {
+                    scheduledPlaces.push({
+                        placeId,
+                        startTime,
+                        endTime,
+                        notes
+                    });
+                }
+            });
+            
+            return scheduledPlaces;
+        }
+        
+        // Add test places for demonstration
+        function addTestPlaces(containerId, startIndex, invalidTimes = false) {
+            // Sample place IDs
+            const placeIds = [
+                'ChIJ5wsqFHsABDQRjRR4AEF6Zkg',
+                'ChIJsQIjhnwABDQRCTVTm-GVzn8',
+                'ChIJ42dQa_MABDQRKKppWIjPPZA'
+            ];
+            
+            let currentIndex = startIndex;
+            
+            // Create 3 places with 2-hour slots
+            for (let i = 0; i < 3; i++) {
+                let startTime = '09:00';
+                let endTime = '11:00';
+                
+                if (i === 1) {
+                    startTime = '11:00';
+                    endTime = '13:00';
+                } else if (i === 2) {
+                    startTime = '13:00';
+                    endTime = '15:00';
+                }
+                
+                if (invalidTimes && i === 1) {
+                    // For the middle place, make end time before start time (invalid)
+                    endTime = '10:00';
+                } else if (invalidTimes && i === 2) {
+                    // For the last place, make it overlap with previous (invalid)
+                    startTime = '12:00';
+                    endTime = '14:00';
+                }
+                
+                createScheduledPlaceTemplate(containerId, currentIndex++, {
+                    placeId: placeIds[i],
+                    startTime: startTime,
+                    endTime: endTime,
+                    notes: invalidTimes ? 
+                        (i === 1 ? 'Invalid: End time before start time' : 
+                         i === 2 ? 'Invalid: Overlaps with previous place' : 'Valid time') :
+                        `Visit place ${i+1}`
+                });
+            }
+            
+            return currentIndex;
+        }
+        
+        // Add Place buttons
+        let createPlaceIndex = 0;
+        document.getElementById('create-add-place-btn').addEventListener('click', () => {
+            createScheduledPlaceTemplate('create-places-container', createPlaceIndex++);
+        });
+        
+        // Add test places button for create
+        document.getElementById('create-add-test-places-btn').addEventListener('click', () => {
+            // Clear existing places
+            document.getElementById('create-places-container').innerHTML = '';
+            createPlaceIndex = addTestPlaces('create-places-container', 0);
+        });
+        
+        let updatePlaceIndex = 0;
+        document.getElementById('update-add-place-btn').addEventListener('click', () => {
+            createScheduledPlaceTemplate('update-places-container', updatePlaceIndex++);
+        });
+        
+        // Add test places button for update
+        document.getElementById('update-add-test-places-btn').addEventListener('click', () => {
+            // Clear existing places
+            document.getElementById('update-places-container').innerHTML = '';
+            updatePlaceIndex = addTestPlaces('update-places-container', 0);
+        });
+        
+        // Add invalid test places button for update
+        document.getElementById('update-add-invalid-places-btn').addEventListener('click', () => {
+            // Clear existing places
+            document.getElementById('update-places-container').innerHTML = '';
+            updatePlaceIndex = addTestPlaces('update-places-container', 0, true);
+        });
+        
+        // Create Itinerary
+        document.getElementById('create-itinerary-btn').addEventListener('click', async () => {
+            if (!authToken) {
+                document.getElementById('create-result').textContent = 'Please login first';
+                return;
+            }
+            
+            const tripId = document.getElementById('create-trip-id').value;
+            const day = document.getElementById('create-day').value;
+            const scheduledPlaces = getScheduledPlacesFromForm('create-places-container');
+            const createResult = document.getElementById('create-result');
+            
+            try {
+                const response = await fetch(`/api/trips/${tripId}/itineraries`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        day: parseInt(day),
+                        scheduledPlaces
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    createResult.textContent = JSON.stringify(data, null, 2);
+                } else {
+                    createResult.innerHTML = '<span class="error">Error:</span> ' + JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                createResult.innerHTML = '<span class="error">Error:</span> ' + error.message;
+            }
+        });
+        
+        // Get Itineraries
+        document.getElementById('get-itineraries-btn').addEventListener('click', async () => {
+            if (!authToken) {
+                document.getElementById('get-result').textContent = 'Please login first';
+                return;
+            }
+            
+            const tripId = document.getElementById('get-trip-id').value;
+            const getResult = document.getElementById('get-result');
+            
+            try {
+                const response = await fetch(`/api/trips/${tripId}/itineraries`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    getResult.textContent = JSON.stringify(data, null, 2);
+                } else {
+                    getResult.innerHTML = '<span class="error">Error:</span> ' + JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                getResult.innerHTML = '<span class="error">Error:</span> ' + error.message;
+            }
+        });
+        
+        // Update Itinerary
+        document.getElementById('update-itinerary-btn').addEventListener('click', async () => {
+            if (!authToken) {
+                document.getElementById('update-result').textContent = 'Please login first';
+                return;
+            }
+            
+            const tripId = document.getElementById('update-trip-id').value;
+            const day = document.getElementById('update-day').value;
+            const scheduledPlaces = getScheduledPlacesFromForm('update-places-container');
+            const updateResult = document.getElementById('update-result');
+            
+            try {
+                const response = await fetch(`/api/trips/${tripId}/itineraries/${day}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        scheduledPlaces
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    updateResult.textContent = JSON.stringify(data, null, 2);
+                } else {
+                    updateResult.innerHTML = '<span class="error">Error:</span> ' + JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                updateResult.innerHTML = '<span class="error">Error:</span> ' + error.message;
+            }
+        });
+        
+        // Delete Itinerary
+        document.getElementById('delete-itinerary-btn').addEventListener('click', async () => {
+            if (!authToken) {
+                document.getElementById('delete-result').textContent = 'Please login first';
+                return;
+            }
+            
+            const tripId = document.getElementById('delete-trip-id').value;
+            const day = document.getElementById('delete-day').value;
+            const deleteResult = document.getElementById('delete-result');
+            
+            try {
+                const response = await fetch(`/api/trips/${tripId}/itineraries/${day}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    deleteResult.textContent = 'Itinerary deleted successfully';
+                } else {
+                    const data = await response.json();
+                    deleteResult.innerHTML = '<span class="error">Error:</span> ' + JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                deleteResult.innerHTML = '<span class="error">Error:</span> ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html> 
