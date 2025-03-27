@@ -70,4 +70,10 @@ public class PlaceController {
         }
         return ResponseEntity.ok(placeService.getAllUniqueTags());
     }
+
+    @GetMapping("/{placeId}/opening-hours")
+    public ResponseEntity<?> getPlaceOpeningHours(@PathVariable String placeId) {
+        PlaceDetailedDTO.OpeningHours openingHours = placeService.getPlaceOpeningHours(placeId);
+        return ResponseEntity.ok(openingHours);
+    }
 } 

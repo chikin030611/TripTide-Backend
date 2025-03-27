@@ -300,4 +300,39 @@ public class PlaceService {
         }
         return allTags;
     }
+    
+    public OpeningHours getPlaceOpeningHours(String placeId) {
+        // Verify the place exists
+        BasePlace place = touristAttractionRepository.findByPlaceId(placeId)
+            .map(p -> (BasePlace) p)
+            .orElseGet(() -> restaurantRepository.findByPlaceId(placeId)
+                .map(p -> (BasePlace) p)
+                .orElseGet(() -> lodgingRepository.findByPlaceId(placeId)
+                    .map(p -> (BasePlace) p)
+                    .orElseThrow(() -> new RuntimeException("Place not found: " + placeId))));
+        
+        // Get detailed data from Google API - specifically requesting opening hours
+        JsonNode placeDetails = googlePlacesService.getDetailedPlaceData(placeId);
+        
+        // Extract opening hours
+        if (placeDetails.has("currentOpeningHours")) {
+            JsonNode openingHoursNode = placeDetails.get("currentOpeningHours");
+            List<Period> periods = new ArrayList<>();
+            
+            if (openingHoursNode.has("periods")) {
+                openingHoursNode.get("periods").forEach(period -> {
+                    periods.add(Period.builder()
+                        .open(extractTimeSlot(period.get("open")))
+                        .close(extractTimeSlot(period.get("close")))
+                        .build());
+                });
+            }
+
+            return OpeningHours.builder()
+                .periods(periods)
+                .build();
+        }
+        
+        return null;
+    }
 } 
