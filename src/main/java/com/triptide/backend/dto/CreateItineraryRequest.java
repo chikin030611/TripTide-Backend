@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateItineraryRequest {
     private Integer day;
-    private List<ScheduledPlaceDto> scheduledPlaces;
+    private List<ScheduledPlaceDTO> scheduledPlaces;
 } 

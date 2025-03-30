@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.triptide.backend.dto.CreateItineraryRequest;
-import com.triptide.backend.dto.ScheduledPlaceDto;
+import com.triptide.backend.dto.ScheduledPlaceDTO;
 import com.triptide.backend.dto.UpdateItineraryRequest;
 import com.triptide.backend.model.AppUser;
 import com.triptide.backend.model.DailyItinerary;
@@ -80,7 +80,7 @@ public class ItineraryService {
         
         // Add scheduled places
         if (request.getScheduledPlaces() != null && !request.getScheduledPlaces().isEmpty()) {
-            for (ScheduledPlaceDto placeDto : request.getScheduledPlaces()) {
+            for (ScheduledPlaceDTO placeDto : request.getScheduledPlaces()) {
                 ScheduledPlace scheduledPlace = new ScheduledPlace();
                 scheduledPlace.setPlaceId(placeDto.getPlaceId());
                 scheduledPlace.setStartTime(Time.valueOf(placeDto.getStartTime()));
@@ -158,7 +158,7 @@ public class ItineraryService {
         
         // Add new scheduled places
         if (request.getScheduledPlaces() != null && !request.getScheduledPlaces().isEmpty()) {
-            for (ScheduledPlaceDto placeDto : request.getScheduledPlaces()) {
+            for (ScheduledPlaceDTO placeDto : request.getScheduledPlaces()) {
                 ScheduledPlace scheduledPlace = new ScheduledPlace();
                 scheduledPlace.setPlaceId(placeDto.getPlaceId());
                 scheduledPlace.setStartTime(Time.valueOf(placeDto.getStartTime()));
@@ -218,9 +218,9 @@ public class ItineraryService {
      * @param scheduledPlaces List of scheduled places to validate
      * @throws ResponseStatusException if validation fails
      */
-    private void validateScheduledPlaces(List<ScheduledPlaceDto> scheduledPlaces) {
+    private void validateScheduledPlaces(List<ScheduledPlaceDTO> scheduledPlaces) {
         // Validate that start time is before end time for each place
-        for (ScheduledPlaceDto place : scheduledPlaces) {
+        for (ScheduledPlaceDTO place : scheduledPlaces) {
             if (place.getStartTime() == null || place.getEndTime() == null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
                         "Start time and end time must be provided for each place");
@@ -233,13 +233,13 @@ public class ItineraryService {
         }
         
         // Sort scheduled places by start time to make overlap checking easier
-        List<ScheduledPlaceDto> sortedPlaces = new ArrayList<>(scheduledPlaces);
-        sortedPlaces.sort(Comparator.comparing(ScheduledPlaceDto::getStartTime));
+        List<ScheduledPlaceDTO> sortedPlaces = new ArrayList<>(scheduledPlaces);
+        sortedPlaces.sort(Comparator.comparing(ScheduledPlaceDTO::getStartTime));
         
         // Check for time overlaps between different scheduled places
         for (int i = 0; i < sortedPlaces.size() - 1; i++) {
-            ScheduledPlaceDto current = sortedPlaces.get(i);
-            ScheduledPlaceDto next = sortedPlaces.get(i + 1);
+            ScheduledPlaceDTO current = sortedPlaces.get(i);
+            ScheduledPlaceDTO next = sortedPlaces.get(i + 1);
             
             // If the end time of the current place is after the start time of the next place, there's an overlap
             if (current.getEndTime().isAfter(next.getStartTime())) {

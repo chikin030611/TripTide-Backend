@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ScheduledPlaceDto {
+public class ScheduledPlaceDTO {
     private String placeId;
     private LocalTime startTime;
     private LocalTime endTime;
