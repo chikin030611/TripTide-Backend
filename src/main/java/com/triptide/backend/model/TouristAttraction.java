@@ -15,7 +15,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TouristAttraction extends BasePlace {
-    private String category;
     
     @ManyToMany
     @JoinTable(
