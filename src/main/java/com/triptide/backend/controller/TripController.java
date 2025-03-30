@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.triptide.backend.dto.AddPlaceToTripRequest;
 import com.triptide.backend.dto.CreateTripRequest;
-import com.triptide.backend.dto.TripResponseDto;
+import com.triptide.backend.dto.TripResponseDTO;
 import com.triptide.backend.dto.UpdateTripRequest;
 import com.triptide.backend.model.Trip;
 import com.triptide.backend.service.TripService;
@@ -47,7 +47,7 @@ public class TripController {
     }
 
     @GetMapping("/{tripId}")
-    public ResponseEntity<TripResponseDto> getTripById(@PathVariable String tripId) {
+    public ResponseEntity<TripResponseDTO> getTripById(@PathVariable String tripId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
         Trip trip = tripService.getTripById(tripId, userEmail);
@@ -102,8 +102,8 @@ public class TripController {
         return ResponseEntity.ok(isInTrip);
     }
 
-    private TripResponseDto convertToResponseDto(Trip trip) {
-        TripResponseDto dto = new TripResponseDto();
+    private TripResponseDTO convertToResponseDto(Trip trip) {
+        TripResponseDTO dto = new TripResponseDTO();
         dto.setId(trip.getId());
         dto.setName(trip.getName());
         dto.setDescription(trip.getDescription());
